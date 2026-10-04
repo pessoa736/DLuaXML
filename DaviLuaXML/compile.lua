@@ -7,17 +7,27 @@ end
 local rt = require "DaviLuaXML.runtime"
 local parser = require "DaviLuaXML.parser"
 
+
+---@class compile_config
+---@field asfile boolean?
+---@field run boolean?
+---@field input string
+---@field output_name string?
+---@field output_ext string?
+
+
+--- @param config compile_config
+--- @return string
 local function compile(config)
     config = {
-        asfile = config.asfile ~= false,
+        asfile = config.asfile or true,
         run = config.run or false,
         input = config.input,
-        input_ext = config.input_ext or ".dslx",
-        output = config.output,
+        output_name = config.output,
         output_ext = config.output_ext or ".lua",
     }
 
-    if config.asfile==false then
+    if config.asfile then
         local nodes = parser(config.input)
         if config.run then
             print(rt.runtime(nodes, {}))
@@ -31,13 +41,18 @@ end
 
 
 if on_test then
-    local bin = compile{
-        asfile = false,
-        run = true,
-        input = "local sum = function(element) return element.childrens[1]+element.childrens[2] end \n" ..
-                "<sum>{2}{3}</sum>"
-    }
-    print(bin)
+    local script = "local sum = function(element) return element.childrens[1]+element.childrens[2] end \n" ..
+                   "<sum>{2}{3}</sum> \n" ..
+                   "print('test')"
+
+    local bin = compile({
+        asfile = true,
+        run = false,
+        input = script
+    })
+
+    print("script: \n".. script)
+    print("\nresponse:  \n" .. bin)
 end
 
 
