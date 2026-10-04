@@ -1,6 +1,0 @@
-#!/usr/bin/env lua
--- DaviLuaXML Compiler CLI
--- Usage: dslxc <file.dslx> [output.lua]
---        dslxc <inputDir/> [outputDir/]
-
-require("DaviLuaXML.compile").cli()
