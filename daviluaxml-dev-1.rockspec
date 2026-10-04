@@ -30,7 +30,9 @@ build = {
       ["DaviLuaXML"]="DaviLuaXML/init.lua",
       ["DaviLuaXML.parser"]="DaviLuaXML/parser.lua",
       ["DaviLuaXML.runtime"]="DaviLuaXML/runtime.lua",
-      ["DaviLuaXML.compile"]="DaviLuaXML/compile.lua"
+      ["DaviLuaXML.compile"]="DaviLuaXML/compile.lua",
+      ["DaviLuaXML.import"]="DaviLuaXML/import.lua",
+      ["DaviLuaXML.readFile"]="DaviLuaXML/readFile.lua",
    },
    copy_directories = {
       "doc"
