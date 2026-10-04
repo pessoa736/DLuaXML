@@ -1,4 +1,4 @@
---- esse aquivo ser para definir a api paser()
+--- esse aquivo server para definir a api paser()
 --- MIT - Davi/Pessoa736 (2026)
 
 
@@ -40,7 +40,7 @@ local Cf = lpeg.Cf
 local caractere   = (R("az", "AZ", "09") + S"_-.")
 local espacos     = S" \t\r\n"^0
 local espaco      = S" \t\r\n"^1
-local q_qualquer  = P(1) 
+local q_qualquer  = P(1)
 
 local element_name    = C(caractere^1)
 local prop_name   = C(caractere^1)
@@ -55,12 +55,13 @@ local block =
         return {node_type="script", content = content}
     end
 
-local str = 
-    P"'" * 
-        C((q_qualquer - P"'")^0) * 
-    P"'" + 
-    P'"' * 
-        C((q_qualquer - P'"')^0) * 
+local str =
+    P"'"
+        * C((q_qualquer - P"'")^0) *
+    P"'"
+    +
+    P'"'
+        * C((q_qualquer - P'"')^0) *
     P'"'
 
 
@@ -97,7 +98,7 @@ local element_self_close =
 
 local Element_parser = P{
     "Element",
-    Element = espacos * (element_self_close + element_completa) * espacos
+    Element = espacos * (element_self_close + element_completa)
 }
 
 local lua_code = C((1 - P"<")^1 + P"<")
