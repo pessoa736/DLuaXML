@@ -1,12 +1,12 @@
 
 --- Lê o conteúdo completo de um arquivo.
---- @param dirFile string Caminho do arquivo
+--- @param pathFile string Caminho do arquivo
 --- @return string Conteúdo do arquivo
 --- @error Se o arquivo não puder ser aberto
-return function (dirFile)
-    local file <close> = io.open(dirFile, "r+")
+return function (pathFile)
+    local file <close> = io.open(pathFile, "r+")
     if not file then
-        error("não foi possivel abrir o arquivo: ".. dirFile)
+        error("não foi possivel abrir o arquivo: ".. pathFile)
     end
 
     local content = file:read("a")
