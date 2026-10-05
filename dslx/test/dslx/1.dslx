@@ -1,0 +1,24 @@
+--- test de compilação de dslx para lua
+
+
+
+
+local function soma(element)
+    local soma = 0 
+    for _, valor in ipairs(element.childrens) do
+        soma = soma + valor
+    end
+
+    return soma + element.props.t
+end
+
+local pt = function(element) print(table.unpack(element.childrens)) end
+
+
+<pt>
+    <soma t={9}>
+        {1}{2}{3}
+    </soma>
+</pt>
+
+print("final do test")
