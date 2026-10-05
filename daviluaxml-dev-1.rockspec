@@ -27,12 +27,12 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      ["DaviLuaXML"]="DaviLuaXML/init.lua",
-      ["DaviLuaXML.parser"]="DaviLuaXML/parser.lua",
-      ["DaviLuaXML.runtime"]="DaviLuaXML/runtime.lua",
-      ["DaviLuaXML.compile"]="DaviLuaXML/compile.lua",
-      ["DaviLuaXML.import"]="DaviLuaXML/import.lua",
-      ["DaviLuaXML.readFile"]="DaviLuaXML/readFile.lua",
+      ["dslx"]="dslx/init.lua",
+      ["dslx.parser"]="dslx/parser.lua",
+      ["dslx.runtime"]="dslx/runtime.lua",
+      ["dslx.compile"]="dslx/compile.lua",
+      ["dslx.import"]="dslx/import.lua",
+      ["dslx.readFile"]="dslx/readFile.lua",
    },
    copy_directories = {
       "doc"
