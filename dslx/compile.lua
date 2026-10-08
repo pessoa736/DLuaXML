@@ -101,8 +101,8 @@ if on_test then
 
     compile({
         output_name = "test",
-        input = "test/dslx/1.dslx",
-        output_dir = "test/dslx",
+        input = "test/1.dslx",
+        output_dir = "test",
         run = false,
         relative_actual_file=true
     })

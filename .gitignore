@@ -4,4 +4,4 @@
 /.luarocks
 *.src.rock
 
-dslx/test/dslx/test.lua
+dslx/test/test.lua
