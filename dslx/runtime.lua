@@ -133,6 +133,9 @@ end
 
 
 
+---@param nodes table
+---@param handlers table<string, function>?
+---@return string new_code
 function M:make_new_code(nodes, handlers)
     handlers = with_defaults(self, handlers)
     local out = {}
