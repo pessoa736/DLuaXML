@@ -27,7 +27,6 @@ local M<const> = {
 }
 
 
---- comment
 --- @param name string|string[]
 --- @param func handleN
 function M:addHandler(name, func)
@@ -45,9 +44,7 @@ M:addHandler("string", function(str) return string.format("%q", str) end)
 M:addHandler(
     "script",
     function (node)
-        local c = node.content or ""
-        if load("return " .. c) then return "((function() return " .. c .. " end)())" end
-        return "((function() " .. c .. " end)())"
+        return node.content
     end
 )
 M:addHandler(
@@ -69,7 +66,7 @@ M:addHandler(
     {"element", "full_element", "element_self_close"},
     function(node, handlers)
         return string.format(
-            "%s({name = %q, props = %s, childrens = %s})",
+            "%s{name=%q, props=%s, childrens=%s}",
             node.element, node.element,
             handlers.props(node, handlers),
             handlers.children(node, handlers)
@@ -83,15 +80,18 @@ M:addHandler(
 
         local parts = {}
         for k, v in pairs(node.props or {}) do
-            local val
-            if type(v) == "table" and v.node_type == "script" then
-                val = handlers.script(v)
-            elseif type(v) == "string" then
-                val = handlers.string(v)
-            else
-                val = tostring(v) -- true
+            
+            if k ~= "node_type" then
+                local val
+                if type(v) == "table" and v.node_type == "script" then
+                    val = handlers.script(v)
+                elseif type(v) == "string" then
+                    val = handlers.string(v)
+                else
+                    val = tostring(v) -- true
+                end
+                parts[#parts + 1] = string.format("%s=%s", k, val)
             end
-            parts[#parts + 1] = string.format("[%q] = %s", k, val)
         end
         return "{" .. table.concat(parts, ", ") .. "}"
     end
