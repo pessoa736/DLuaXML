@@ -128,7 +128,7 @@ end
 if on_test then
     M.install()
     local here = (debug.getinfo(1, "S").source:match("^@(.*)[/\\][^/\\]*$") or ".")
-    M.path = M.path .. ";" .. here .. "/test/dslx/?.dslx;" .. here .. "/test/dslx/?/init.dslx;"
+    M.path = M.path .. ";" .. here .. "/test/?.dslx;" .. here .. "/test/?/init.dslx;"
     require("1")
 end
 
