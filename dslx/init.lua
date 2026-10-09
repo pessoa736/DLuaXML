@@ -20,10 +20,11 @@ local dslx = {
 --- @param element_func fun(element_data: Node):any
 --- @return boolean, string?, number?
 _G.is_element = function (element_func)
+    if type(element_func) ~= "function" then return false, "o elemento precisa ser uma função." end
+
     local info = debug.getinfo(element_func, "u")
     local nparan = info.nparams
-    
-    if type(element_func) ~= "function" then return false, "o elemento precisa ser uma função." end
+
     if nparan < 1 then return false, "função do elemento precisa receber o element_data.", nparan end
     if nparan > 1 then return false, "elemento so recebe 1 argumento.", nparan end
 
@@ -38,6 +39,7 @@ if on_test then
     print(is_element(element1))
     print(is_element(element2))
     print(is_element(element3))
+    print(is_element(42))
 end
 
 dslx.import.install()
