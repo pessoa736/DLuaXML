@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.1-1] - 2026-10-09
+
+### Added
+- `is_element` global that validates whether a function can be used as an element (exactly 1 parameter).
+
+### Fixed
+- `is_element` no longer crashes when the argument is not a function.
+- Runtime generates more compact code: sugar `func{...}` calls, inlined expressions and alphabetically ordered props.
+- `import.M.compile` now returns `nil, err` when compilation fails instead of erroring with a confusing message.
+- Import test path updated to the new fixture location (`dslx/test/?.dslx`).
+
+### Changed
+- LSP annotations (`---@param`/`---@return`) and MIT headers added across all modules.
+- Removed the unused `loglua` dependency.
+
+## [2.0-1] - 2026-10-04
+
+### Breaking
+- Module renamed from `DaviLuaXML` to `dslx`, complete rewrite of the library on top of LPeg.
+
+### Added
+- Parser rewritten on LPeg: `<tag prop="x">texto</tag>` becomes `tag{name = "tag", props = {prop = "x"}, childrens = {"texto"}}`.
+- Runtime with extensible handler system: register custom node types with `runtime:addHandler`.
+- Import API: `require()` of `.dslx` files directly, with `install`/`uninstall`/`loadfile`/`reload`/`clear`.
+- Compiler can write the generated Lua to a file (`tofile`, `output_dir`, `output_name`) and resolves relative paths.
+- Main module exports the full API and installs the `require` searcher automatically.
+
+### Removed
+- 1.x subsystems dropped in the rewrite: `proptypes`, middleware, cache, sourcemap, treeshake and the `dslxc` CLI.
+
 ## [1.5-1] - 2025-12-15
 
 ### Added
