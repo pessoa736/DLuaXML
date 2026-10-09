@@ -56,38 +56,48 @@ Requisitos: Lua 5.5 e [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) (instalad
 
 No .dslx qualquer função definida no ambiente do Lua pode ser chamada no formato do XML. A tag vira uma chamada de função que recebe uma única tabela com o nome da tag, as props e os childrens:
 
-```lua
-soma{name = "soma", props = { t = 9 }, childrens = { 1, 2, 3 }}
-```
-
-Um exemplo completo, direto no Lua:
 
 ```lua
-local dslx = require("dslx")
-local parser, runtime = dslx.parser, dslx.runtime
+--- codigo em dslx
+local function soma(element)
+    local soma = 0 
+    for _, valor in ipairs(element.childrens) do
+        soma = soma + valor
+    end
 
-local code = [[
-local function soma(el)
-    local total = el.props.t
-    for _, v in ipairs(el.childrens) do total = total + v end
-    return total
+    return soma + element.props.t
 end
 
-print(<soma t={9}>{1}{2}{3}</soma>)
-]]
+local pt = function(element) print(table.unpack(element.childrens)) end
 
-local nodes = parser(code)
-print(runtime:make_new_code(nodes)) -- código Lua gerado
-runtime:runtime(nodes)             -- executa: 15
+
+<pt>
+    <soma t={9}>
+        {1}{2}{3}
+    </soma>
+</pt>
+
+print("final do test")
 ```
-
-O `parser` devolve a lista de nodes do código, `runtime:make_new_code` gera o código Lua equivalente e `runtime:runtime` compila e executa. O `print(<soma t={9}>{1}{2}{3}</soma>)` vira:
 
 ```lua
-print(soma{name="soma", props={t=9}, childrens={1, 2, 3}})
-```
+--- vira codigo lua
+local function soma(element)
+    local soma = 0 
+    for _, valor in ipairs(element.childrens) do
+        soma = soma + valor
+    end
 
-As expressões `{...}` entram direto no código gerado, sem wrappers. Note que a função `soma` está dentro da string `code`: ela vira parte do código Lua gerado, então locais do script externo não são visíveis pra ela.
+    return soma + element.props.t
+end
+
+local pt = function(element) print(table.unpack(element.childrens)) end
+
+
+pt{name="pt", props={}, childrens={soma{name="soma", props={t=9}, childrens={1, 2, 3}}}}
+
+print("final do test")
+```
 
 ### sintaxe
 
