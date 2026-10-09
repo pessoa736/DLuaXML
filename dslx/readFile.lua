@@ -1,3 +1,7 @@
+--- MIT - Davi/Pessoa736 (2026)
+
+---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
+
 
 --- Lê o conteúdo completo de um arquivo.
 --- @param pathFile string Caminho do arquivo

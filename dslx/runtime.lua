@@ -1,10 +1,11 @@
----@diagnostic disable: need-check-nil
+--- MIT - Davi/Pessoa736 (2026)
+
+---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
+
 local on_test = false
 if arg and arg[0] and arg[0]:match("runtime%.lua$") then
     on_test = true
 end
-
-
 
 
 
@@ -23,7 +24,7 @@ end
 ---@class runtime_moduler
 ---@field __handlers __handlers
 local M<const> = {
-    __handlers = {}
+    __handlers = {},
 }
 
 
@@ -37,6 +38,8 @@ function M:addHandler(name, func)
         end
     end
 end
+
+
 
 
 M:addHandler("lua", function(node) return node.content end)
@@ -98,6 +101,10 @@ M:addHandler(
 )
 
 
+
+--- @param self runtime_moduler
+--- @param handlers __handlers
+--- @return __handlers
 local function with_defaults(self, handlers)
     if not handlers or handlers == self.__handlers then return self.__handlers end
     return setmetatable({}, {__index = function(_, k)

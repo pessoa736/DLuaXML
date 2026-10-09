@@ -1,3 +1,6 @@
+--- MIT - Davi/Pessoa736 (2026)
+
+---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
 local on_test = false
 if arg and arg[0] and arg[0]:match("init%.lua$") then

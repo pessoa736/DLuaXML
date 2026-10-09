@@ -1,3 +1,8 @@
+--- MIT - Davi/Pessoa736 (2026)
+
+
+---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
+
 local on_test = false
 if arg and arg[0] and arg[0]:match("import%.lua$") then
     on_test = true
@@ -9,7 +14,7 @@ local compile = require("dslx.compile")
 
 
 
-
+--- @class DSLXImportLib
 local M <const> = {
     path = package.path:gsub("?.lua", "?.dslx"):gsub("?/init.lua", "?/init.dslx"),
     use_cache = true,
@@ -18,6 +23,11 @@ local M <const> = {
     compiled = {}
 }
 
+
+
+--- @param filename any
+--- @param opts any
+--- @return any, string?
 function M.loadfile(filename, opts)
   local use_cache = M.use_cache
   if opts and opts.cache ~= nil then use_cache = opts.cache end
@@ -38,9 +48,11 @@ function M.loadfile(filename, opts)
 end
 
 
+--- @param name string
+--- @return string?, string?
 function M.searcher(name)
   local filename, why = package.searchpath(name, M.path)
-  if not filename then return why end 
+  if not filename then return why end
 
   local chunk, err = M.loadfile(filename)
   if not chunk then
@@ -51,12 +63,19 @@ function M.searcher(name)
   return chunk, filename
 end
 
+
+--- @param list table
+--- @param fn function
+--- @return integer?
 local function index_of(list, fn)
   for i, v in ipairs(list) do
     if v == fn then return i end
   end
 end
 
+
+---@param pos number?
+---@return DSLXImportLib
 function M.install(pos)
   if not index_of(package.searchers, M.searcher) then
     table.insert(package.searchers, pos or 2, M.searcher)
@@ -64,6 +83,8 @@ function M.install(pos)
   return M
 end
 
+
+--- @return DSLXImportLib
 function M.uninstall()
   local i = index_of(package.searchers, M.searcher)
   if i then table.remove(package.searchers, i) end
@@ -75,18 +96,28 @@ function M.clear()
   M.compiled, M.loaded = {}, {}
 end
 
+
+--- @param path string
+--- @return string?, string?
 M.read_file = function(path)
   local ok, res = pcall(readFile, path)
   if ok then return res end
   return nil, res
 end
 
+
+--- @param src string
+--- @param chunkname string
+--- @return any?, string?
 M.compile = function(src, chunkname)
   local ok, code = pcall(compile, { input = src, asfile = false, tofile = false }, chunkname)
-  if not ok then return nil, code end
+  if not ok or not code then return nil, code end
   return load(code, chunkname, "t")
 end
 
+
+--- @param name string
+--- @return any, any
 function M.reload(name)
   package.loaded[name] = nil
   local filename = M.loaded[name]

@@ -1,6 +1,7 @@
 --- esse aquivo server para definir a api paser()
 --- MIT - Davi/Pessoa736 (2026)
 
+---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
 
 local on_test = false
@@ -137,12 +138,14 @@ local function serializer (tabl, t)
     return str .. "}"
 end
 
+
 ---@class Node
 ---@field node_type "element"|"full_element"|"element_self_close"|"element_prop"|"lua"|"script"
 ---@field children table<string|number, Node|string>|nil
 ---@field content string|nil
 ---@field element string|nil
 ---@field props   table<string, Node>
+
 
 ---@type fun(code: string): Node
 local function parser(code)

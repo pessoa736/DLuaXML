@@ -1,3 +1,7 @@
+--- MIT - Davi/Pessoa736 (2026)
+
+---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
+
 local on_test = false
 if arg and arg[0] and arg[0]:match("compile%.lua$") then
     on_test = true
@@ -7,6 +11,19 @@ end
 local rt = require "dslx.runtime"
 local parser = require "dslx.parser"
 local readFile = require "dslx.readFile"
+
+
+
+local function default(v, d)
+    if v == nil then return d end
+    return v
+end
+
+local function join(base, path)
+    if path:sub(1, 1) == "/" then return path end
+    return base .. path
+end
+
 
 
 ---@class compile_config
@@ -19,17 +36,6 @@ local readFile = require "dslx.readFile"
 ---@field output_ext string??
 ---@field output_dir string?
 ---@field relative_actual_file boolean?
-
-
-local function default(v, d)
-    if v == nil then return d end
-    return v
-end
-
-local function join(base, path)
-    if path:sub(1, 1) == "/" then return path end
-    return base .. path
-end
 
 --- @param config compile_config
 --- @return string?
