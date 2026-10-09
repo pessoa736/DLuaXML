@@ -1,5 +1,5 @@
 package = "DaviLuaXML"
-version = "dev-1"
+version = "2.1-1"
 source = {
    url = "git+https://github.com/pessoa736/DLuaXML",
    tag = "2.1-1"
