@@ -16,8 +16,6 @@
 - [DSLX - Davi System Lua-XML](#dslx---davi-system-lua-xml)
   - [sumário](#sumário)
   - [sobre o que se trata o DSLX?](#sobre-o-que-se-trata-o-dslx)
-  - [qual é o objetivo?](#qual-é-o-objetivo)
-  - [status do projeto](#status-do-projeto)
   - [instalação](#instalação)
   - [como funciona?](#como-funciona)
     - [sintaxe](#sintaxe)
@@ -29,7 +27,6 @@
     - [import](#import)
     - [is\_element](#is_element)
   - [o que DSLX não é](#o-que-dslx-não-é)
-  - [porque surgiu?](#porque-surgiu)
   - [licença](#licença)
 
 ## sobre o que se trata o DSLX?
@@ -46,14 +43,6 @@ graph TD;
     D --> E("código Lua puro");
     E --> F("executa");
 ```
-
-## qual é o objetivo?
-
-Fazer uma linguagem JSX-like para Lua, com a melhor eficiência, performance, dentro do que for possível, focando em Lua puro.
-
-## status do projeto
-
-O projeto está em estado experimental, mesmo com uma base da estrutura bem sólida, muitas APIs e muitos conceitos podem mudar a qualquer momento. E bugs são esperados.
 
 ## instalação
 
@@ -196,10 +185,6 @@ Retorna `true` se serve; senão `false`, a mensagem de erro e o número de parâ
 
 - **não é um substituto do Lua**, o DSLX é para funcionar em conjunto ao Lua
 
-## porque surgiu?
-
-eu estava afim de desenvolver ferramentas Lua separadas para criar uma framework web na mesma pegada do next.js e react. para isso pensei primeiro em criar um JSX-like so que Lua. comecei pincelando a ideia manualmente e depois fui pedindo ajuda ao copilot.
-caso queira da uma olhada como ta o processo de criação da framework: [Pudimweb](https://github.com/pessoa736/PudimWeb)
 
 ## licença
 
