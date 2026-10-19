@@ -1,11 +1,22 @@
+---@meta DSLX.Compile
 --- MIT - Davi/Pessoa736 (2026)
+---@module "dlsx.compile"
+
+
+
 
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
+
+
+
+-- imports
 local rt = require "dslx.runtime"
 local parser = require "dslx.parser"
 local readFile = require "dslx.readFile"
 local inspect = require "inspect"
+
+
 
 
 
@@ -27,12 +38,20 @@ local inspect = require "inspect"
 ---@field show_compilation_info boolean
 ---@field compile DSLX_Compile_Function
 ---@field __call DSLX_Compile_Function
+---@field _LICENSE "MIT License"
+---@field _DESCRIPTION "DSLX (lua + xml) compiler to lua"
+---@field _AUTOR "Davi/Pessoa736"
 local M <const> = {
     show_conpilation_info = false,
     __call = function (self, ...)
         return self:compile(...)
-    end
+    end,
+    _AUTOR = "Davi/Pessoa736",
+    _DESCRIPTION = "DSLX (lua + xml) compiler to lua",
+    _LICENSE = "MIT License"
 }
+
+
 M.__index = M
 setmetatable(M,M)
 
