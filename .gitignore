@@ -3,5 +3,6 @@
 /lua_modules
 /.luarocks
 *.src.rock
+.dslx-*/
 
 dslx/test/test.lua
