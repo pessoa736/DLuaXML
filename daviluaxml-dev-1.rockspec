@@ -23,7 +23,8 @@ description = {
    license = "MIT"
 }
 dependencies = {
-   "lpeg"
+   "lpeg",
+   "inspect"
 }
 
 build = {
