@@ -2,10 +2,8 @@
 
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
-local on_test = false
-if arg and arg[0] and arg[0]:match("compile%.lua$") then
-    on_test = true
-end
+local on_test = select("#", ...) and true or false
+
 
 -- local readFile = require "readFile"
 local rt = require "dslx.runtime"

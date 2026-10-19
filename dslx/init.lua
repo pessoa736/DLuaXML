@@ -2,12 +2,6 @@
 
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
-local on_test = false
-if arg and arg[0] and arg[0]:match("init%.lua$") then
-    on_test = true
-end
-
-
 local dslx = {
     parser = require("dslx.parser"),
     compile = require("dslx.compile"),
@@ -32,7 +26,7 @@ _G.is_element = function (element_func)
 end
 
 
-if on_test then 
+if select("#", ...) then
     local element1 = function (element_data) return "aaa" end
     local element2 = function () return "aaa" end
     local element3 = function (_, _, _) return "" end

@@ -17,7 +17,7 @@ local pt = function(element) print(table.unpack(element.childrens)) end
 
 <pt>
     <soma t={9}>
-        {1}{2}{3}
+        {1}{2, 3}
     </soma>
 </pt>
 

@@ -3,14 +3,12 @@
 
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
-local on_test = false
-if arg and arg[0] and arg[0]:match("import%.lua$") then
-    on_test = true
-end
-
 
 local readFile = require("dslx.readFile")
 local compile = require("dslx.compile")
+
+
+
 
 
 
@@ -22,6 +20,9 @@ local M <const> = {
     loaded   = {},
     compiled = {}
 }
+
+
+
 
 
 
@@ -125,7 +126,10 @@ function M.reload(name)
   return require(name)
 end
 
-if on_test then
+
+
+---- teste
+if select("#", ...) then
     M.install()
     local here = (debug.getinfo(1, "S").source:match("^@(.*)[/\\][^/\\]*$") or ".")
     M.path = M.path .. ";" .. here .. "/test/?.dslx;" .. here .. "/test/?/init.dslx;"

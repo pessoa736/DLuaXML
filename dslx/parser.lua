@@ -4,12 +4,6 @@
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
 
-local on_test = false
-if arg and arg[0] and arg[0]:match("parser%.lua$") then
-    on_test = true
-end
-
-
 
 ---@alias lpeg_element any
 
@@ -159,7 +153,7 @@ end
 
 
 ---- test
-if on_test then
+if select("#", ...) then
     local function test(script)
         script = script or "print('sem script')"
         local obj = parser(script)
@@ -169,8 +163,6 @@ if on_test then
 
     test "local a = <element prop1='' prop2={'2'} prop3> txt aleatorio {local a = 9} <test/> </element> \n print(a)"
     test "local a<const> = 2"
-   
-    
 end
 
 return parser

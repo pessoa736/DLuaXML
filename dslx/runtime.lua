@@ -183,8 +183,8 @@ end
 
 
 
-
-if on_test then
+---- teste
+if select("#", ...) then
     local parser = require "dslx.parser"
 
     local function test(script)
@@ -209,4 +209,7 @@ if on_test then
 end
 
 
+
+
+---- modulo exportado
 return M
