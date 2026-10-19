@@ -1,6 +1,6 @@
 ---@meta DSLX.Compile
 --- MIT - Davi/Pessoa736 (2026)
----@module "dlsx.compile"
+---@module "dslx.compile"
 
 
 
@@ -41,11 +41,16 @@ local inspect = require "inspect"
 ---@field _LICENSE "MIT License"
 ---@field _DESCRIPTION "DSLX (lua + xml) compiler to lua"
 ---@field _AUTOR "Davi/Pessoa736"
+
+
+
+---@type DSLX_Compile_Module
 local M <const> = {
     show_conpilation_info = false,
     __call = function (self, ...)
         return self:compile(...)
     end,
+
     _AUTOR = "Davi/Pessoa736",
     _DESCRIPTION = "DSLX (lua + xml) compiler to lua",
     _LICENSE = "MIT License"
