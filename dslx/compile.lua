@@ -2,10 +2,6 @@
 
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
-local on_test = false
-
-
-
 local rt = require "dslx.runtime"
 local parser = require "dslx.parser"
 local readFile = require "dslx.readFile"
@@ -141,7 +137,6 @@ local is_main =
 
 
 if is_main then
-    on_test = true
     M.show_conpilation_info = true
     
     M:compile({
