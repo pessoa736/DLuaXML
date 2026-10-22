@@ -4,6 +4,8 @@
 ---@version 5.5
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
+
+--#region lpeg definitions
 ---@class lpeg_C_object: userdata, table
 ---@operator len():string|lpeg_C_object
 ---@operator add(lpeg_C_object): lpeg_C_object
@@ -34,6 +36,7 @@
 ---@field Cmt fun(Pattern: lpeg_patern, func: function): lpeg_C_object
 ---@field V fun(v: string): lpeg_C_object
 local lpeg = require("lpeg")
+--#endregion
 
 local P = lpeg.P
 local S = lpeg.S
@@ -44,6 +47,7 @@ local Ct = lpeg.Ct
 local Cmt = lpeg.Cmt
 local V = lpeg.V
 local Cf = lpeg.Cf
+
 
 local inspect = require "inspect"
 
