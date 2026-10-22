@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/schema/config.schema.json",
+  "runtime": {
+    "version": "Lua 5.4"
+  },
+  "workspace": {
+    "checkThirdParty": "Disable",
+    "library": [
+      "dslx",
+      "/data/data/com.termux/files/home/.luarocks/share/lua/5.5",
+      "/data/data/com.termux/files/home/.luarocks/lib/lua/5.5",
+      "/data/data/com.termux/files/home/Documemts/DLuaXML/lua_modules/share/lua/5.5"
+    ]
+  }
+}

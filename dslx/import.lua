@@ -1,8 +1,8 @@
----@meta DSLX.Import
 --- MIT - Davi/Pessoa736 (2026)
----@module "dslx.import"
+-- (@meta marca o arquivo como definition file pro LuaLS: sem diagnostics;
+-- só cabeçalho aqui mesmo, o restante das anotações fica.)
 
-
+---@version 5.5
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
 
 
@@ -41,16 +41,16 @@ local inspect = require "inspect"
 
 ---@type DSLX_Import_Module
 local M <const> = {
-    _AUTOR = "Davi/Pessoa736",
-    _DESCRIPTION = "DSLX (lua + xml) importer",
-    _LICENSE = "MIT License",
+  _AUTOR                 = "Davi/Pessoa736",
+  _DESCRIPTION           = "DSLX (lua + xml) importer",
+  _LICENSE               = "MIT License",
 
-    show_debug = false,
-    path = package.path:gsub("?.lua", "?.dslx"):gsub("?/init.lua", "?/init.dslx"),
-    use_cache = true,
-    use_relative_file_path = true,
-    loaded   = {},
-    compiled = {},
+  show_debug             = false,
+  path                   = package.path:gsub("?.lua", "?.dslx"):gsub("?/init.lua", "?/init.dslx"),
+  use_cache              = true,
+  use_relative_file_path = true,
+  loaded                 = {},
+  compiled               = {},
 }
 
 
@@ -74,11 +74,10 @@ function M.loadfile(filename, opts)
   return chunk
 end
 
-
 function M.searcher(name, opts)
   local filename, why = package.searchpath(name, M.path)
-  if not filename then 
-    return why 
+  if not filename then
+    return why
   end
 
   local chunk, err = M.loadfile(filename, opts)
@@ -92,7 +91,6 @@ function M.searcher(name, opts)
   end
   return chunk, filename
 end
-
 
 --- @param list table
 --- @param fn function
@@ -108,20 +106,18 @@ function M.install(pos, opts)
   if not index_of(package.searchers, M.searcher) then
     pos = pos or 2
     table.insert(package.searchers, pos, M.searcher)
-    if (opts and opts.show_debug) or M.show_debug  then
-      print("\n\nimporter DSLX instalado em package.searcher na posição "..pos)
+    if (opts and opts.show_debug) or M.show_debug then
+      print("\n\nimporter DSLX instalado em package.searcher na posição " .. pos)
       print(inspect(package.searchers), "\n\n")
     end
   end
   return M
 end
 
-
-
 function M.uninstall(opts)
   local i = index_of(package.searchers, M.searcher)
   if i then table.remove(package.searchers, i) end
-  if (opts and opts.show_debug) or M.show_debug  then
+  if (opts and opts.show_debug) or M.show_debug then
     print("\n\nimporter DSLX desinstalado em package.searcher")
     print(inspect(package.searchers), "\n\n")
   end
@@ -131,13 +127,12 @@ end
 function M.clear(opts)
   for name in pairs(M.loaded) do package.loaded[name] = nil end
   M.compiled, M.loaded = {}, {}
-  if (opts and opts.show_debug) or M.show_debug  then
+  if (opts and opts.show_debug) or M.show_debug then
     print("\n\n limpando modulos importados")
     print("compilados: " .. inspect(M.compiled))
     print("carregados: " .. inspect(M.loaded), "\n\n")
   end
 end
-
 
 M.read_file = function(path, opts)
   local ok, res = pcall(readFile, path)
@@ -167,8 +162,6 @@ function M:syncPath(opts)
   self.path = package.path:gsub("?.lua", "?.dslx")
 end
 
-
-
 ---- test
 local is_main =
     type(arg) == "table" and arg[0] ~= nil
@@ -177,14 +170,14 @@ local is_main =
 
 
 if is_main then
-    M.show_debug = true
-    M.install(nil, M)
-    local here = (debug.getinfo(1, "S").source:match("^@(.*)[/\\][^/\\]*$") or ".")
-    M.path = M.path .. ";" .. here .. "/test/?.dslx;" .. here .. "/test/?/init.dslx;"
-    require("1")
+  M.show_debug = true
+  M.install(nil, M)
+  local here = (debug.getinfo(1, "S").source:match("^@(.*)[/\\][^/\\]*$") or ".")
+  M.path = M.path .. ";" .. here .. "/test/?.dslx;" .. here .. "/test/?/init.dslx;"
+  require("1")
 
-    M.clear(M)
-    M.uninstall(M)
+  M.clear(M)
+  M.uninstall(M)
 end
 
 return M

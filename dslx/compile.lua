@@ -1,6 +1,4 @@
----@meta DSLX.Compile
 --- MIT - Davi/Pessoa736 (2026)
----@module "dslx.compile"
 
 
 
