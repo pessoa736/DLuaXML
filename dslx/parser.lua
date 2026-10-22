@@ -13,14 +13,14 @@
 ---@operator div(lpeg_C_object): lpeg_C_object
 ---@operator pow(lpeg_C_object|number): lpeg_C_object
 ---@operator mod(lpeg_C_object): lpeg_C_object
----@field match function
+---@field match fun(code: string): any
 
 ---@class lpeg_rule_obj: table<number, string>,table<string, lpeg_C_object>
 
 ---@class lpeg_patern: string, lpeg_C_object
 
 ---@class lpeg: metatable, lpeg_C_object
----@field match function
+---@field match fun(self: any, code: string): any
 ---@field P fun(value: lpeg_rule_obj|number|string): lpeg_C_object
 ---@field S fun(string: string): lpeg_C_object
 ---@field R fun(...: string): lpeg_C_object
@@ -60,20 +60,32 @@ local inspect = require "inspect"
 ---@field parser fun(self:DSLX_Parser_Module, code: string):DSLX_AST_Node
 ---@operator call(string):DSLX_AST_Node
 ---@field SetPattern fun(self:DSLX_Parser_Module, name: string, pattern: lpeg_C_object)
+---@field GetPattern fun(self:DSLX_Parser_Module, name: string):lpeg_C_object
+---@field SetParserPrincipal fun(self: DSLX_Parser_Module, name: string)
+---@field parser_principal string?
+---@field match fun(self: DSLX_Parser_Module, code: string): any?
 local M <const> = {
     patterns = {},
+    parser_principal = nil;
     lpeg = lpeg
 }
 M.__index = M
-function M:__call(code) self:parser(code) end
 
-setmetatable(M, M)
+
+setmetatable(M,{
+    __call=function(self, code) return self:parser(code) end
+})
 
 
 function M:SetPattern(name, pattern) self.patterns[name] = pattern end
+function M:GetPattern(name) return self.patterns[name] or error("não existe pattern: ".. name) end
+function M:SetParserPrincipal(name) self.parser_principal = name end
+function M:match(code)
+    return (self:GetPattern(self.parser_principal)):match(code)
+end
 
-function M:GetPattern(name) return self.patterns[name] end
 
+--#region making patterns
 M:SetPattern(
     "chars",
     (R("az", "AZ", "09") + S("_-."))
@@ -139,40 +151,115 @@ M:SetPattern(
     )
 )
 
-local element_props = Cf(Ct("") * (element_prop * espacos + prop_name) ^ 0, function(acc, name, value)
-    acc.node_type = "element_prop"
-    return rawset(acc, name, value == nil and true or value)
-end)
 
-local open_element = P("<") * espacos * element_name * espaco ^ 0 * element_props * espacos * P(">")
-local childrens = Ct((V("Element") + block + C((q_qualquer - P("<") - block) ^ 1)) ^ 0)
-local close_element = P("</") * espacos * element_name * espacos * P(">")
-
-local element_completa = Cmt(
-    open_element * childrens * close_element,
-    function(s, i, open_name, props, children, close_name)
-        if open_name ~= close_name then
-            return nil
+M:SetPattern(
+    "element_props",
+    Cf(
+        Ct("") *
+            (
+                M:GetPattern("element_prop")*
+                M:GetPattern("spaces") +
+                M:GetPattern("prop_name")
+            ) ^ 0,
+        function(acc, name, value)
+            acc.node_type = "element_prop"
+            return rawset(acc, name, value == nil and true or value)
         end
-        return i, { node_type = "full_element", element = open_name, props = props, children = children }
+    )
+)
+
+M:SetPattern(
+    "open_element",
+    P("<")*
+        M:GetPattern("spaces")*
+        M:GetPattern("element_name")*
+        M:GetPattern("space")^0 *
+        M:GetPattern("element_props")*
+        M:GetPattern("spaces")*
+    P(">")
+)
+
+M:SetPattern(
+    "childrens",
+    Ct((
+        V("Element")+
+        M:GetPattern("block")+
+        C((
+            M:GetPattern("q_any")-
+            P("<")-
+            M:GetPattern("block")
+        ) ^ 1)
+    ) ^ 0)
+)
+
+
+M:SetPattern(
+    "close_element",
+     P("</")*
+        M:GetPattern("spaces")*
+        M:GetPattern("element_name")*
+        M:GetPattern("spaces")*
+    P(">")
+)
+
+M:SetPattern(
+    "full_element",
+     Cmt(
+        M:GetPattern("open_element") * M:GetPattern("childrens") * M:GetPattern("close_element"),
+        
+        function(s, i, open_name, props, children, close_name)
+            if open_name ~= close_name then return nil end
+
+            return i, { node_type = "full_element", element = open_name, props = props, children = children }
+        end
+    )
+)
+
+M:SetPattern(
+    "element_self_close",
+    (P("<")*
+        M:GetPattern("spaces")*
+        M:GetPattern("element_name")*
+        M:GetPattern("space") ^ 0 *
+        M:GetPattern("element_props")*
+        M:GetPattern("spaces")*
+    P("/>"))/
+    function(name, props)
+        return { node_type = "element_self_close", element = name, props = props }
     end
 )
 
-local element_self_close = (P("<") * espacos * element_name * espaco ^ 0 * element_props * espacos * P("/>"))
-    / function(name, props)
-        return { node_type = "element_self_close", element = name, props = props }
+M:SetPattern(
+    "Element_parser",
+    P{
+        "Element",
+        Element = M:GetPattern("spaces")*
+        (
+            M:GetPattern("element_self_close")+
+            M:GetPattern('full_element')
+        ),
+    }
+)
+
+M:SetPattern(
+    "lua_code",
+    C((1 - P("<")) ^ 1 + P("<"))/ 
+    function(s)
+        return { node_type = "lua", content = s }
     end
+)
 
-local Element_parser = P({
-    "Element",
-    Element = espacos * (element_self_close + element_completa),
-})
+M:SetPattern(
+    "File_parser",
+    Ct((
+        M:GetPattern("Element_parser")+
+        M:GetPattern("lua_code")
+    ) ^ 0)
+)
+--#endregion
 
-local lua_code = C((1 - P("<")) ^ 1 + P("<")) / function(s)
-    return { node_type = "lua", content = s }
-end
 
-local File_parser = Ct((Element_parser + lua_code) ^ 0)
+M:SetParserPrincipal("File_parser")
 
 
 
@@ -186,7 +273,7 @@ local File_parser = Ct((Element_parser + lua_code) ^ 0)
 
 
 function M:parser(code)
-    local obj = File_parser:match(code)
+    local obj = self:match(code)
     if not obj then
         return setmetatable({}, {
             __tostring = function()
@@ -203,6 +290,10 @@ function M:parser(code)
     )
 end
 
+
+
+
+------------------------------------------------------------------------------------------
 ---- test
 local is_main =
     type(arg) == "table" and arg[0] ~= nil
@@ -221,7 +312,7 @@ if is_main then
     test("local a = <element prop1='' prop2={'2'} prop3> txt aleatorio {local a = 9} <test/> </element> \n print(a)")
     test("local a<const> = 2")
 end
-
+------------------------------------------------------------------------------------------
 
 
 return M
