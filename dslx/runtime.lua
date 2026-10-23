@@ -77,8 +77,8 @@ M:SetHandler(
         return string.format(
             "%s{name=%q, props=%s, childrens=%s}",
             node.element, node.element,
-            Runtime_Handlers.props(node, Runtime_Handlers),
-            Runtime_Handlers.children(node, Runtime_Handlers)
+            Runtime_Handlers["props"](node, Runtime_Handlers),
+            Runtime_Handlers["children"](node, Runtime_Handlers)
         )
     end
 )
@@ -93,9 +93,9 @@ M:SetHandler(
             if k ~= "node_type" then
                 local val
                 if type(v) == "table" and v.node_type == "script" then
-                    val = Runtime_Handlers.script(v)
+                    val = Runtime_Handlers["script"](v)
                 elseif type(v) == "string" then
-                    val = Runtime_Handlers.string(v)
+                    val = Runtime_Handlers["string"](v)
                 else
                     val = tostring(v) -- true
                 end
@@ -206,6 +206,7 @@ if is_main then
 
     local function test(script)
         if parser and type(parser.parser)~="function" then
+            ---@diagnostic disable-next-line: cast-local-type
             parser = function (_)
                 return {{node_type="lua", content="print(\"erro em importar o parser\")"}} 
             end
