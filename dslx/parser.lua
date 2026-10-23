@@ -68,6 +68,7 @@ local Cf = lpeg.Cf
 ---| "element_prop"
 ---| "full_element"
 ---| "element_self_close"
+---| "file"
 --- nome dos nodes conhecidos
 
 
@@ -324,7 +325,10 @@ M:SetPattern(
     Ct((
         M:GetPattern("Element_parser")+
         M:GetPattern("lua_code")
-    ) ^ 0)
+    ) ^ 0)/
+    function (s)
+        return {node_type = "file", children = s}
+    end
 )
 --#endregion
 
