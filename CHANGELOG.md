@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.1-2] - 2026-10-18
+
+### Fixed
+- Tests no longer run when a user file has the same name as a library module (`on_test` detection now uses `select("#", ...)` instead of matching `arg[0]`).
+
 ## [2.1-1] - 2026-10-09
 
 ### Added
