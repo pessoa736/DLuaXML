@@ -1,0 +1,8 @@
+
+
+function helloworld(el)
+    return "hello world"
+end
+
+print(<helloworld />)
+print("aaaa2")
