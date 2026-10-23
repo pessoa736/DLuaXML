@@ -35,19 +35,15 @@ local inspect = require "inspect"
 ---@class DSLX_Compile_Module
 ---@field show_compilation_info boolean
 ---@field compile DSLX_Compile_Function
----@field __call DSLX_Compile_Function
 ---@field _LICENSE "MIT License"
 ---@field _DESCRIPTION "DSLX (lua + xml) compiler to lua"
 ---@field _AUTOR "Davi/Pessoa736"
-
-
-
----@type DSLX_Compile_Module
+---
+---
+---
 local M <const> = {
-    show_conpilation_info = false,
-    __call = function (self, ...)
-        return self:compile(...)
-    end,
+    show_compilation_info = false,
+   
 
     _AUTOR = "Davi/Pessoa736",
     _DESCRIPTION = "DSLX (lua + xml) compiler to lua",
@@ -55,8 +51,11 @@ local M <const> = {
 }
 
 
-M.__index = M
-setmetatable(M,M)
+setmetatable(M, {
+     __call = function (self, ...)
+        return self:compile(...)
+    end,
+})
 
 
 
@@ -114,7 +113,8 @@ function M:compile(config, chunkname)
     end
 
     local nodes = parser(input)
-    local new_code = rt:make_new_code(nodes)
+
+    local new_code = rt:make_new_code(nodes.children or nodes)
 
     if not config.tofile then
         if config.run then
@@ -151,6 +151,8 @@ end
 
 
 
+------------------------------------------------------------------------------------------
+--#region test ---------------------------------------------------------------------------
 
 local is_main =
     type(arg) == "table" and arg[0] ~= nil
@@ -170,7 +172,8 @@ if is_main then
     })
 
 end
-
+--#endregion test ------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 
 return M
 

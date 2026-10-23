@@ -82,7 +82,7 @@ function M.searcher(name, opts)
 
   local chunk, err = M.loadfile(filename, opts)
   if not chunk then
-    error(("erro ao carregar o módulo '%s' (%s):\n%s"):format(name, filename, err), 0)
+    error(("erro ao carregar o módulo '%s' (%s):\n\n%s"):format(name, filename, err), 0)
   end
 
   M.loaded[name] = filename
@@ -142,7 +142,7 @@ end
 
 
 M.compile = function(src, chunkname, opts)
-  local ok, code = pcall(compile, { input = src, asfile = false, tofile = false }, chunkname)
+  local ok, code = pcall(compile, { input = src, asfile = false, tofile = false, run = false }, chunkname)
   if not ok or not code then return nil, code end
   if (opts and opts.show_debug) or M.show_debug then
     print(("(%s): \n '%s'"):format(chunkname, code))
@@ -162,7 +162,12 @@ function M:syncPath(opts)
   self.path = package.path:gsub("?.lua", "?.dslx")
 end
 
----- test
+
+
+
+------------------------------------------------------------------------------------------
+--#region test ---------------------------------------------------------------------------
+
 local is_main =
     type(arg) == "table" and arg[0] ~= nil
     and debug.getinfo(1, "S").source == "@" .. arg[0]
@@ -179,5 +184,10 @@ if is_main then
   M.clear(M)
   M.uninstall(M)
 end
+
+--#endregion test ------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+
 
 return M
