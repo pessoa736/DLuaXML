@@ -3,40 +3,51 @@
 
 ---@version 5.5
 ---@diagnostic disable: need-check-nil, duplicate-set-field, duplicate-doc-field, duplicate-doc-alias, duplicate-doc-param
+---@diagnostic enable: spell-check
 
 
 --#region lpeg definitions
+
 ---@class lpeg_C_object: userdata, table
----@operator len():string|lpeg_C_object
----@operator add(lpeg_C_object): lpeg_C_object
----@operator sub(lpeg_C_object): lpeg_C_object
----@operator unm(lpeg_C_object): lpeg_C_object
----@operator mul(lpeg_C_object): lpeg_C_object
----@operator div(lpeg_C_object): lpeg_C_object
----@operator pow(lpeg_C_object|number): lpeg_C_object
----@operator mod(lpeg_C_object): lpeg_C_object
----@field match fun(code: string): any
+---
+--- @operator len():string|lpeg_C_object
+--- @operator add(lpeg_C_object): lpeg_C_object
+--- @operator sub(lpeg_C_object): lpeg_C_object
+--- @operator unm(lpeg_C_object): lpeg_C_object
+--- @operator mul(lpeg_C_object): lpeg_C_object
+--- @operator div(lpeg_C_object): lpeg_C_object
+--- @operator pow(lpeg_C_object|number): lpeg_C_object
+--- @operator mod(lpeg_C_object): lpeg_C_object
+---
+--- @field match fun(self:any, code: string): any
+
+
 
 ---@class lpeg_rule_obj: table<number, string>,table<string, lpeg_C_object>
-
 ---@class lpeg_patern: string, lpeg_C_object
 
+
+
 ---@class lpeg: metatable, lpeg_C_object
----@field match fun(self: any, code: string): any
----@field P fun(value: lpeg_rule_obj|number|string): lpeg_C_object
----@field S fun(string: string): lpeg_C_object
----@field R fun(...: string): lpeg_C_object
----@field utfR fun(code_point1:number|string, code_point2: number|string):lpeg_C_object
----@field locate fun(l: table<any|unknown, table>):lpeg_C_object
----@field B fun(Pattern: lpeg_patern): lpeg_C_object
----@field C fun(Pattern: lpeg_patern): lpeg_C_object
----@field Ct fun(Pattern: lpeg_patern): lpeg_C_object
----@field Cf fun(Pattern: lpeg_patern, func: function): lpeg_C_object
----@field Cg fun(Pattern: lpeg_patern, key?: number): lpeg_C_object
----@field Cmt fun(Pattern: lpeg_patern, func: function): lpeg_C_object
----@field V fun(v: string): lpeg_C_object
+---
+--- @field match fun(self:any, code: string): any
+---
+--- @field P fun(value: lpeg_rule_obj|number|string): lpeg_C_object
+--- @field S fun(string: string): lpeg_C_object
+--- @field R fun(...: string): lpeg_C_object
+--- @field utfR fun(code_point1:number|string, code_point2: number|string):lpeg_C_object
+--- @field locate fun(l: table<any|unknown, table>):lpeg_C_object
+--- @field B fun(Pattern: lpeg_patern): lpeg_C_object
+--- @field C fun(Pattern: lpeg_patern): lpeg_C_object
+--- @field Ct fun(Pattern: lpeg_patern): lpeg_C_object
+--- @field Cf fun(Pattern: lpeg_patern, func: function): lpeg_C_object
+--- @field Cg fun(Pattern: lpeg_patern, key?: number): lpeg_C_object
+--- @field Cmt fun(Pattern: lpeg_patern, func: function): lpeg_C_object
+--- @field V fun(v: string): lpeg_C_object
+---
+--#endregion lpeg definitions
 local lpeg = require("lpeg")
---#endregion
+local inspect = require "inspect"
 
 local P = lpeg.P
 local S = lpeg.S
@@ -49,31 +60,86 @@ local V = lpeg.V
 local Cf = lpeg.Cf
 
 
-local inspect = require "inspect"
+
+---@alias DSLX_Parser_Know_Nodes
+---| "lua"
+---| "script"
+---| "props"
+---| "element_prop"
+---| "full_element"
+---| "element_self_close"
+--- nome dos nodes conhecidos
 
 
+---@alias DSLX_Parser_Know_Patterns
+---| DSLX_Parser_Know_Nodes
+---| "children"
+---| "element_props"
+---| "space"
+---| "spaces"
+---| "q_any"
+---| "chars"
+---| "str"
+---| "block"
+---| "element_name"
+---| "prop_name"
+---| "open_element"
+---| "childrens"
+---| "close_element"
+---| "Element_parser"
+---| "lua_code"
+---| "File_parser"
+--- nome dos padrões conhecidos
 
+
+--- nodes AST de informação do codigo
 ---@class DSLX_AST_Node
----@field node_type "element"|"full_element"|"element_self_close"|"element_prop"|"lua"|"script"
----@field children table<string|number, DSLX_AST_Node|string|nil>|nil
----@field content string|nil
----@field element string|nil
----@field props   table<string, DSLX_AST_Node>|nil
+---@field node_type DSLX_Parser_Know_Nodes tipo do node
+---@field children table<string|number, DSLX_AST_Node|string|nil>|nil sua decendecia
+---@field content string|nil conteudo
+---@field element string|nil nome do elemento
+---@field props   table<string, DSLX_AST_Node>|nil seus paramentros
 
----@class DSLX_Parser_Module
----@field parser fun(self:DSLX_Parser_Module, code: string):DSLX_AST_Node
----@operator call(string):DSLX_AST_Node
----@field SetPattern fun(self:DSLX_Parser_Module, name: string, pattern: lpeg_C_object)
----@field GetPattern fun(self:DSLX_Parser_Module, name: string):lpeg_C_object
----@field SetParserPrincipal fun(self: DSLX_Parser_Module, name: string)
----@field parser_principal string?
----@field match fun(self: DSLX_Parser_Module, code: string): any?
+
+--- Modulo que analiza e transforma codigo dslx em Nodes AST
+---@class (exact) DSLX_Parser_Module
+---
+--- @operator call(string):DSLX_AST_Node ja faz a chamada da função parser
+--- @field parser_principal string? qual regra/padrão (pattern) é o parser principal
+--- @field patterns table<DSLX_Parser_Know_Patterns|string, lpeg_C_object> banco de paterns
+--- @field lpeg lpeg lpeg ja importado para modificações nos patterns caso necessario
+---
+--- @field parser 
+--- | fun(self:DSLX_Parser_Module, code: string):DSLX_AST_Node 
+--- 
+--- 
+--- @field SetPattern 
+--- | fun(self:DSLX_Parser_Module, name: DSLX_Parser_Know_Patterns|string, pattern: lpeg_C_object)
+--- 
+--- @field GetPattern 
+--- | fun(self:DSLX_Parser_Module, name: DSLX_Parser_Know_Patterns|string):lpeg_C_object
+--- 
+--- @field SetParserPrincipal 
+--- | fun(self: DSLX_Parser_Module, name: DSLX_Parser_Know_Patterns|string)
+--- 
+--- @field match 
+--- | fun(self: DSLX_Parser_Module, code: string): any?
+---
+--- @field _LICENSE "MIT License" licensa: MIT License
+--- @field _DESCRIPTION "parser of DSLX" descrição: parser do DSLX
+--- @field _AUTOR "Davi/Pessoa736" autor: Davi/Pessoa736
+---
 local M <const> = {
     patterns = {},
     parser_principal = nil;
-    lpeg = lpeg
+    lpeg = lpeg,
+
+
+    _LICENSE = "MIT License",
+    _AUTOR  = "Davi/Pessoa736",
+    _DESCRIPTION = "parser of DSLX"
 }
-M.__index = M
+
 
 
 setmetatable(M,{
@@ -264,16 +330,6 @@ M:SetPattern(
 
 
 M:SetParserPrincipal("File_parser")
-
-
-
-
----@class DSLX_AST_Node
----@field node_type "element"|"full_element"|"element_self_close"|"element_prop"|"lua"|"script"
----@field children table<string|number, DSLX_AST_Node|string|nil>|nil
----@field content string|nil
----@field element string|nil
----@field props   table<string, Node>|nil
 
 
 function M:parser(code)
