@@ -22,6 +22,7 @@
     - [importação dos .dslx através do require](#importação-dos-dslx-através-do-require)
   - [API](#api)
     - [parser](#parser)
+    - [estendendo o parser](#estendendo-o-parser)
     - [runtime](#runtime)
     - [compile](#compile)
     - [import](#import)
@@ -33,12 +34,12 @@
 
 DSLX (ou Davi System: Lua XML) é um módulo que fornece ao Lua a capacidade de interpretar arquivos .dslx no qual permite ler código Lua e transformar o XML em Lua puro num mesmo arquivo e depois executa, parecido com o JSX.
 
-A partir da versão 2.0 o módulo foi renomeado para `dslx` e reescrito sobre [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/): o parser transforma o código em uma lista de nodes e o runtime gera (e executa) código Lua puro a partir deles.
+A partir da versão 2.0 o módulo foi renomeado para `dslx` e reescrito sobre [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/): o parser transforma o código em uma AST (um node raiz `file` com os nodes filhos) e o runtime gera (e executa) código Lua puro a partir dela.
 
 ```mermaid
 graph TD;
     A("código em DSLX") --> B("parser (LPeg)");
-    B --> C("lista de nodes");
+    B --> C("node file (AST)");
     C --> D("runtime: make_new_code");
     D --> E("código Lua puro");
     E --> F("executa");
@@ -141,17 +142,43 @@ print("import ok:", ok)     -- true
 ### parser
 
 ```lua
-local nodes = parser(code)
+local file = parser(code)
 ```
 
-Transforma o código em uma lista de nodes. Cada node tem um `node_type`: `lua`, `script`, `string`, `children`, `props`, `element`, `full_element`, `element_self_close` ou `element_prop`. Em falha, devolve uma tabela vazia.
+Transforma o código em uma AST: um node raiz `{node_type = "file", children = {...}}` com os nodes filhos. Cada node tem um `node_type`: `file`, `lua`, `script`, `full_element`, `element_self_close` ou `element_prop`. Em falha, devolve uma tabela vazia (cujo `tostring` é `"nil (Falha no Parser)"`); em sucesso, o node pode ser impresso direto com `print(file)`.
+
+### estendendo o parser
+
+Os patterns LPeg ficam num registry (`parser.patterns`) e a gramática pode ser estendida sem mexer no código-fonte:
+
+- `parser:SetPattern(name, pattern)` — registra (ou substitui) um pattern
+- `parser:GetPattern(name)` — devolve um pattern registrado (erro se não existir)
+- `parser:SetParserPrincipal(name)` — define qual pattern o `match` usa
+- `parser:match(code)` — roda o parser principal sobre o código
+- `parser.lpeg` — o módulo LPeg, pra montar patterns novos
+
+Exemplo: um parser estrito, que falha se sobrar código depois do último node:
+
+```lua
+local parser = require("dslx.parser")
+
+parser:SetPattern("File_parser_strict",
+    parser:GetPattern("File_parser") * -parser.lpeg.P(1))
+
+parser:SetParserPrincipal("File_parser_strict")
+
+local file = parser("<div/>") -- agora usa o pattern novo
+```
+
+> [!NOTE]
+> A composição dos patterns é estática: cada pattern é montado com `GetPattern` no momento em que é definido. Trocar um pattern base (tipo `element_name`) depois do load não afeta os patterns que já foram compostos com ele — pra isso é preciso redefinir também a cadeia de dependentes. O jeito mais simples de estender é criar um pattern novo por cima dos existentes, como no exemplo acima.
 
 ### runtime
 
 - `runtime:addHandler(name, func)` — registra um handler customizado por `node_type` (`name` pode ser uma string ou uma tabela de nomes)
 - `runtime:expr(node, handlers)` — devolve o código Lua de um node
 - `runtime:make_new_code(nodes, handlers)` — devolve o código Lua completo
-- `runtime:runtime(nodes, handlers)` — compila e executa o código
+- `runtime:runtime(file, handlers)` — compila e executa o código (aceita o node `file` retornado pelo parser ou uma lista de nodes)
 
 ### compile
 
