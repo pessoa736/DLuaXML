@@ -2,7 +2,7 @@
 
 <div style="display: flex; justify-content: center; justify-self: left;">
     <img src="doc/DSLX_icon.png" width="128px" />
-    <p>Um interpretador JSX-like para Lua.</p>
+    <p>A JSX-like interpreter for Lua.</p>
     <a href="https://luarocks.org/modules/pessoa736/daviluaxml">
         <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml/latest" />
     </a>
@@ -11,57 +11,59 @@
     </a>
 </div>
 
-> [!WARNING]
-> Projeto experimental. APIs podem mudar sem aviso.
+[English](README.md) | [Português](README.pt-BR.md)
 
-## sumário
+> [!WARNING]
+> Experimental project. APIs may change without notice.
+
+## table of contents
 
 - [DSLX - Davi System Lua-XML](#dslx---davi-system-lua-xml)
-  - [sumário](#sumário)
-  - [sobre o que se trata o DSLX?](#sobre-o-que-se-trata-o-dslx)
-  - [instalação](#instalação)
-  - [como funciona?](#como-funciona)
-    - [sintaxe](#sintaxe)
-    - [importação dos .dslx através do require](#importação-dos-dslx-através-do-require)
+  - [table of contents](#table-of-contents)
+  - [what is DSLX about?](#what-is-dslx-about)
+  - [installation](#installation)
+  - [how does it work?](#how-does-it-work)
+    - [syntax](#syntax)
+    - [importing .dslx through require](#importing-dslx-through-require)
   - [API](#api)
     - [parser](#parser)
+    - [extending the parser](#extending-the-parser)
     - [runtime](#runtime)
     - [compile](#compile)
     - [import](#import)
     - [is\_element](#is_element)
-  - [o que DSLX não é](#o-que-dslx-não-é)
-  - [licença](#licença)
+  - [what DSLX is not](#what-dslx-is-not)
+  - [license](#license)
 
-## sobre o que se trata o DSLX?
+## what is DSLX about?
 
-DSLX (ou Davi System: Lua XML) é um módulo que fornece ao Lua a capacidade de interpretar arquivos .dslx no qual permite ler código Lua e transformar o XML em Lua puro num mesmo arquivo e depois executa, parecido com o JSX.
+DSLX (or Davi System: Lua XML) is a module that gives Lua the ability to interpret .dslx files, which allow reading Lua code and turning XML into pure Lua in the same file and then executing it, much like JSX.
 
-A partir da versão 2.0 o módulo foi renomeado para `dslx` e reescrito sobre [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/): o parser transforma o código em uma lista de nodes e o runtime gera (e executa) código Lua puro a partir deles.
+As of version 2.0 the module was renamed to `dslx` and rewritten on top of [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/): the parser turns the code into an AST (a `file` root node with the child nodes) and the runtime generates (and executes) pure Lua code from it.
 
 ```mermaid
 graph TD;
-    A("código em DSLX") --> B("parser (LPeg)");
-    B --> C("lista de nodes");
+    A("code in DSLX") --> B("parser (LPeg)");
+    B --> C("node file (AST)");
     C --> D("runtime: make_new_code");
-    D --> E("código Lua puro");
-    E --> F("executa");
+    D --> E("pure Lua code");
 ```
 
-## instalação
+## installation
 
 ```bash
 luarocks install daviluaxml
 ```
 
-Requisitos: Lua 5.5 e [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) (instalado automaticamente como dependência).
+Requirements: Lua 5.5, [inspect](https://github.com/kikito/inspect.lua), [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) (installed automatically as a dependency).
 
-## como funciona?
+## how does it work?
 
-No .dslx qualquer função definida no ambiente do Lua pode ser chamada no formato do XML. A tag vira uma chamada de função que recebe uma única tabela com o nome da tag, as props e os childrens:
+In a .dslx file, any function defined in the Lua environment can be called in XML format. The tag becomes a function call that receives a single table with the tag name, the props and the childrens:
 
 
 ```lua
---- codigo em dslx
+--- code in dslx
 local function soma(element)
     local soma = 0 
     for _, valor in ipairs(element.childrens) do
@@ -84,7 +86,7 @@ print("final do test")
 ```
 
 ```lua
---- vira codigo lua
+--- becomes lua code
 local function soma(element)
     local soma = 0 
     for _, valor in ipairs(element.childrens) do
@@ -102,40 +104,43 @@ pt{name="pt", props={}, childrens={soma{name="soma", props={t=9}, childrens={1, 
 print("final do test")
 ```
 
-### sintaxe
+### syntax
 
-Props e childrens podem ser strings, expressões Lua, booleans ou elementos aninhados (conteúdo de um arquivo `.dslx`):
+Props and childrens can be strings, Lua expressions, booleans or nested elements (the content of a `.dslx` file):
 
 ```dslx
 local function card(el)
     -- props
     el.props.titulo   -- "olá"    (string)
-    el.props.largura  -- 10       (expressão Lua)
-    el.props.destaque -- true     (boolean, só o nome da prop)
+    el.props.largura  -- 10       (Lua expression)
+    el.props.destaque -- true     (boolean, just the prop name)
 
     -- childrens
-    el.childrens[1]    -- "texto " (texto literal)
-    el.childrens[2]    -- 42       (expressão Lua)
-    el.childrens[3]    -- tabela   (elemento aninhado)
+    el.childrens[1]    -- "texto " (literal text)
+    el.childrens[2]    -- 42       (Lua expression)
+    el.childrens[3]    -- table    (nested element)
 end
 
--- tag completa
-local c1 = <card titulo="olá" largura={10} destaque>texto {40 + 2} <card/></card>
+-- full tag
+local c1 = <card titulo="olá" largura={10} destaque>
+texto {40 + 2} 
+    <card/>
+</card>
 
--- tag self-close
+-- self-closing tag
 local c2 = <card titulo="tchau"/>
 ```
 
-Um elemento aninhado vira uma chamada ao componente dentro da tabela de childrens: o valor retornado por ele é o que aparece em `el.childrens`. Se o componente retornar `nil`, o children simplesmente não existe. E como em Lua os valores são avaliados antes do constructor da tabela, o elemento aninhado roda antes do pai.
+A nested element becomes a call to the component inside the childrens table: the value it returns is what appears in `el.childrens`. If the component returns `nil`, the child simply doesn't exist. And since in Lua values are evaluated before the table constructor, the nested element runs before its parent.
 
-### importação dos .dslx através do require
+### importing .dslx through require
 
-Quando seu projeto importa o módulo do DSLX ele carrega o loader do DSLX, sobrepondo o require no ambiente no qual foi importado, permitindo importar o .dslx da mesma forma do .lua:
+When your project imports the DSLX module it loads the DSLX loader, overriding require in the environment where it was imported, allowing you to import .dslx the same way as .lua:
 
 ```lua
 package.path = package.path .. ";./dslx/test/?.dslx"
-local dslx = require("dslx") -- instala o searcher automaticamente
-local ok = require("1")     -- carrega e executa 1.dslx
+local dslx = require("dslx") -- installs the searcher automatically
+local ok = require("1")     -- loads and runs 1.dslx
 print("import ok:", ok)     -- true
 ```
 
@@ -144,43 +149,69 @@ print("import ok:", ok)     -- true
 ### parser
 
 ```lua
-local nodes = parser(code)
+local file = parser(code)
 ```
 
-Transforma o código em uma lista de nodes. Cada node tem um `node_type`: `lua`, `script`, `string`, `children`, `props`, `element`, `full_element`, `element_self_close` ou `element_prop`. Em falha, devolve uma tabela vazia.
+Turns the code into an AST: a root node `{node_type = "file", children = {...}}` with the child nodes. Each node has a `node_type`: `file`, `lua`, `script`, `full_element`, `element_self_close` or `element_prop`. On failure, it returns an empty table (whose `tostring` is `"nil (Falha no Parser)"`); on success, the node can be printed directly with `print(file)`.
+
+### extending the parser
+
+The LPeg patterns live in a registry (`parser.patterns`) and the grammar can be extended without touching the source code:
+
+- `parser:SetPattern(name, pattern)` — registers (or replaces) a pattern
+- `parser:GetPattern(name)` — returns a registered pattern (error if it doesn't exist)
+- `parser:SetParserPrincipal(name)` — sets which pattern the `match` uses
+- `parser:match(code)` — runs the main parser over the code
+- `parser.lpeg` — the LPeg module, for building new patterns
+
+Example: a strict parser, which fails if there's leftover code after the last node:
+
+```lua
+local parser = require("dslx.parser")
+
+parser:SetPattern("File_parser_strict",
+    parser:GetPattern("File_parser") * -parser.lpeg.P(1))
+
+parser:SetParserPrincipal("File_parser_strict")
+
+local file = parser("<div/>") -- now uses the new pattern
+```
+
+> [!NOTE]
+> Pattern composition is static: each pattern is built with `GetPattern` at the moment it's defined. Changing a base pattern (like `element_name`) after load doesn't affect the patterns that were already composed with it — for that you also need to redefine the chain of dependents. The simplest way to extend is to create a new pattern on top of the existing ones, as in the example above.
 
 ### runtime
 
-- `runtime:addHandler(name, func)` — registra um handler customizado por `node_type` (`name` pode ser uma string ou uma tabela de nomes)
-- `runtime:expr(node, handlers)` — devolve o código Lua de um node
-- `runtime:make_new_code(nodes, handlers)` — devolve o código Lua completo
-- `runtime:runtime(nodes, handlers)` — compila e executa o código
+- `runtime:addHandler(name, func)` — registers a custom handler per `node_type` (`name` can be a string or a table of names)
+- `runtime:expr(node, handlers)` — returns the Lua code of a node
+- `runtime:make_new_code(nodes, handlers)` — returns the complete Lua code
+- `runtime:runtime(file, handlers)` — compiles and executes the code (accepts the `file` node returned by the parser or a list of nodes)
 
 ### compile
 
 ```lua
 compile({
-    input = "arquivo.dslx",       -- arquivo .dslx de entrada (ou código, com asfile = false)
-    asfile = true,                -- lê input como arquivo
-    tofile = true,                -- escreve a saída em arquivo (false: devolve o código)
-    run = false,                  -- executa o resultado
-    output_name = nil,            -- nome do arquivo de saída (default: nome do input)
-    output_ext = ".lua",          -- extensão da saída
-    output_dir = ".",            -- diretório da saída
-    relative_actual_file = false, -- resolve caminhos relativos ao arquivo que chamou
+    input = "arquivo.dslx",       -- input .dslx file (or code, with asfile = false)
+    asfile = true,                -- reads input as a file
+    tofile = true,                -- writes output to a file (false: returns the code)
+    run = false,                  -- runs the result
+    output_name = nil,            -- output file name (default: input name)
+    output_ext = ".lua",          -- output extension
+    output_dir = ".",            -- output directory
+    relative_actual_file = false, -- resolves relative paths against the calling file
 })
 ```
 
-Com `tofile = false` e `run = false` o `compile` devolve o código gerado; com `run = true` executa o resultado.
+With `tofile = false` and `run = false` `compile` returns the generated code; with `run = true` it executes the result.
 
 ### import
 
-- `import.install()` / `import.uninstall()` — adiciona/remove o searcher de .dslx do `require()`
-- `import.loadfile(filename, opts)` — carrega um .dslx direto
-- `import.reload(name)` — recarrega um módulo já importado
-- `import.clear()` — limpa os módulos .dslx carregados e o cache
-- `import.path` — o `package.path` usado pelo searcher
-- `import.use_cache` — cache de compilação (default: true)
+- `import.install()` / `import.uninstall()` — adds/removes the .dslx searcher from `require()`
+- `import.loadfile(filename, opts)` — loads a .dslx directly
+- `import.reload(name)` — reloads an already imported module
+- `import.clear()` — clears the loaded .dslx modules and the cache
+- `import.path` — the `package.path` used by the searcher
+- `import.use_cache` — compilation cache (default: true)
 
 ### is_element
 
@@ -188,19 +219,17 @@ Com `tofile = false` e `run = false` o `compile` devolve o código gerado; com `
 local ok, err, nparams = is_element(minha_funcao)
 ```
 
-Global instalada pelo `require("dslx")`. Valida se uma função serve como elemento DSLX: precisa ser uma função que recebe exatamente 1 argumento (a tabela do elemento).
+Global installed by `require("dslx")`. Validates whether a function works as a DSLX element: it must be a function that takes exactly 1 argument (the element table).
 
-Retorna `true` se serve; senão `false`, a mensagem de erro e o número de parâmetros da função.
+Returns `true` if it works; otherwise `false`, the error message and the number of parameters of the function.
 
-## o que DSLX não é
+## what DSLX is not
 
-- **não é html**, html é uma linguagem web para criação de páginas, o DSLX é um Lua+XML. e XML é uma linguagem de estruturação rígida para sistemas.
+- **it's not html**, html is a web language for creating pages, DSLX is a Lua+XML. and XML is a rigid structuring language for systems.
 
-- **não é um substituto do Lua**, o DSLX é para funcionar em conjunto ao Lua
-
-
-## licença
-
-Esse módulo é MIT. Sinta-se livre para brincar e fazer o que quiser a sua fork desse projeto, mantendo os créditos :)
+- **it's not a Lua replacement**, DSLX is meant to work together with Lua
 
 
+## license
+
+This module is MIT. Feel free to play around and do whatever you want with your fork of this project, keeping the credits :)
