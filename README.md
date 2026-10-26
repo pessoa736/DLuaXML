@@ -4,7 +4,10 @@
     <img src="doc/DSLX_icon.png" width="128px" />
     <p>Um interpretador JSX-like para Lua.</p>
     <a href="https://luarocks.org/modules/pessoa736/daviluaxml">
-        <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml" />
+        <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml/latest" />
+    </a>
+    <a href="https://github.com/pessoa736/DLuaXML/releases/tag/2.2-1">
+        <img src="https://img.shields.io/badge/release-2.2--1-blue" />
     </a>
 </div>
 
