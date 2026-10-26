@@ -74,11 +74,20 @@ M:SetHandler(
 M:SetHandler(
     {"element", "full_element", "element_self_close"},
     function(node, Runtime_Handlers)
+
+        local str
+        if node.self_close then
+            str = "%s{name=%q, props=%s, childrens=%s, node_type=%q, self_close=true}"
+        else
+            str = "%s{name=%q, props=%s, childrens=%s, node_type=%q}"
+        end
+
         return string.format(
-            "%s{name=%q, props=%s, childrens=%s}",
+            str,
             node.element, node.element,
             Runtime_Handlers["props"](node, Runtime_Handlers),
-            Runtime_Handlers["children"](node, Runtime_Handlers)
+            Runtime_Handlers["children"](node, Runtime_Handlers),
+            node.node_type
         )
     end
 )
