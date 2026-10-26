@@ -2,19 +2,16 @@
 
 <div style="display: flex; justify-content: center; justify-self: left;">
     <img src="doc/DSLX_icon.png" width="128px" />
-    <p>A JSX-like interpreter for Lua.</p>
+    <p>Um interpretador JSX-like para Lua.</p>
     <a href="https://luarocks.org/modules/pessoa736/daviluaxml">
-        <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml/2.2-1" />
-    </a>
-    <a href="https://github.com/pessoa736/DLuaXML/releases/tag/2.2-1">
-        <img src="https://img.shields.io/badge/release-2.2--1-blue" />
+        <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml" />
     </a>
 </div>
 
 [English](README.md) | [Português](README.pt-BR.md)
 
 > [!WARNING]
-> Experimental project. APIs may change without notice.
+> Projeto experimental. APIs podem mudar sem aviso.
 
 ## table of contents
 
