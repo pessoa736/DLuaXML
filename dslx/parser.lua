@@ -100,6 +100,7 @@ local Cf = lpeg.Cf
 ---@field content string|nil conteudo
 ---@field element string|nil nome do elemento
 ---@field props   table<string, DSLX_AST_Node>|nil seus paramentros
+---@field self_close boolean|nil
 
 
 --- Modulo que analiza e transforma codigo dslx em Nodes AST
@@ -296,7 +297,7 @@ M:SetPattern(
         M:GetPattern("spaces")*
     P("/>"))/
     function(name, props)
-        return { node_type = "element_self_close", element = name, props = props }
+        return { node_type = "element_self_close", element = name, props = props, self_close=true }
     end
 )
 
