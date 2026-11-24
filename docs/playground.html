@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Playground — DSLX</title>
+<link rel="stylesheet" href="assets/style.css"/>
+<script src="assets/transpiler.js"></script>
+<!-- Fengari: Lua 5.3 running in WebAssembly -->
+<script src="https://unpkg.com/fengari-web@0.1.4/dist/fengari-web.js"></script>
+</head>
+<body>
+
+<!-- ── nav ── -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DSLX <span>playground</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="hide-mobile">Reference</a>
+    <a href="playground.html" class="active">Playground</a>
+    <a href="https://github.com/pessoa736/DLuaXML" class="hide-mobile">GitHub ↗</a>
+  </div>
+</nav>
+
+<div class="pg-layout">
+
+  <!-- toolbar -->
+  <div class="pg-toolbar">
+    <label>Example:</label>
+    <select class="pg-select" id="exampleSelect">
+      <option value="hello">Hello world</option>
+      <option value="arithmetic">Arithmetic</option>
+      <option value="nesting">Nesting</option>
+      <option value="props">Props &amp; booleans</option>
+      <option value="custom">Custom…</option>
+    </select>
+    <button class="pg-btn pg-btn-run" id="runBtn">▶ Run</button>
+    <button class="pg-btn pg-btn-clear" id="clearBtn">Clear output</button>
+    <span class="pg-status" id="status">ready</span>
+  </div>
+
+  <!-- panels -->
+  <div class="pg-panels">
+
+    <!-- DSLX input -->
+    <div class="pg-panel">
+      <div class="pg-panel-header"><span class="dot" style="background:#f78166"></span>DSLX input</div>
+      <textarea class="pg-editor" id="dslxInput" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+    </div>
+
+    <!-- Generated Lua -->
+    <div class="pg-panel">
+      <div class="pg-panel-header"><span class="dot" style="background:#58a6ff"></span>Generated Lua</div>
+      <textarea class="pg-output" id="luaOutput" readonly spellcheck="false"></textarea>
+    </div>
+
+    <!-- Execution output -->
+    <div class="pg-panel">
+      <div class="pg-panel-header"><span class="dot" style="background:#3fb950"></span>Output</div>
+      <pre class="pg-output empty" id="execOutput">— press Run to execute —</pre>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── examples ──────────────────────────────────────────────────────────────
+const EXAMPLES = {
+  hello: `-- Simple greeting element
+local function greet(el)
+    return "Hello, " .. el.props.name .. "!"
+end
+
+print(<greet name="world"/>)
+print(<greet name="DSLX"/>)`,
+
+  arithmetic: `-- Arithmetic from test.dslx
+local function soma(element)
+    local total = 0
+    for _, valor in ipairs(element.childrens) do
+        total = total + valor
+    end
+    return total + element.props.t
+end
+
+local function pt(element)
+    print(table.unpack(element.childrens))
+end
+
+<pt>
+    <soma t={9}>
+        {1}{2}{3}
+    </soma>
+</pt>`,
+
+  nesting: `-- Nesting elements
+local function div(el)
+    local parts = {}
+    for _, child in ipairs(el.childrens) do
+        parts[#parts + 1] = tostring(child)
+    end
+    return "[div: " .. table.concat(parts, " | ") .. "]"
+end
+
+local function span(el)
+    return "(span: " .. el.childrens[1] .. ")"
+end
+
+local result = <div>
+    <span>hello</span>
+    <span>world</span>
+</div>
+
+print(result)`,
+
+  props: `-- Props: strings, expressions, booleans
+local function input(el)
+    local t   = el.props.type or "text"
+    local req = el.props.required and " [required]" or ""
+    local ph  = el.props.placeholder or ""
+    return string.format('<%s placeholder="%s"%s/>', t, ph, req)
+end
+
+print(<input type="email" placeholder="Enter email" required/>)
+print(<input type="text"  placeholder="Username"/>)
+print(<input type="number" placeholder={tostring(2 + 2)} required/>)`,
+
+  custom: `-- Write your own DSLX code here
+local function greet(el)
+    return "Hello, " .. el.props.name .. "!"
+end
+
+print(<greet name="world"/>)`
+};
+
+// ── Lua runner (Fengari) ──────────────────────────────────────────────────
+function runLua(code) {
+    if (typeof fengari === 'undefined') {
+        return { ok: false, output: '', error: 'Fengari not loaded. Check your connection.' };
+    }
+
+    const { lua, lauxlib, lualib, to_luastring, to_jsstring } = fengari;
+    let outputBuffer = '';
+
+    const L = lauxlib.luaL_newstate();
+    lualib.luaL_openlibs(L);
+
+    // Override print to capture output
+    lua.lua_pushjsfunction(L, function(LL) {
+        const n = lua.lua_gettop(LL);
+        const parts = [];
+        for (let i = 1; i <= n; i++) {
+            lauxlib.luaL_tolstring(LL, i, null);
+            const s = lua.lua_tostring(LL, -1);
+            parts.push(s ? to_jsstring(s) : 'nil');
+            lua.lua_pop(LL, 1);
+        }
+        outputBuffer += parts.join('\t') + '\n';
+        return 0;
+    });
+    lua.lua_setglobal(L, to_luastring('print'));
+
+    const status = lauxlib.luaL_dostring(L, to_luastring(code));
+    if (status !== lua.LUA_OK) {
+        const errVal = lua.lua_tostring(L, -1);
+        const errMsg = errVal ? to_jsstring(errVal) : 'unknown error';
+        return { ok: false, output: outputBuffer, error: errMsg };
+    }
+
+    return { ok: true, output: outputBuffer, error: null };
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────
+const dslxInput  = document.getElementById('dslxInput');
+const luaOutput  = document.getElementById('luaOutput');
+const execOutput = document.getElementById('execOutput');
+const statusEl   = document.getElementById('status');
+const runBtn     = document.getElementById('runBtn');
+const clearBtn   = document.getElementById('clearBtn');
+const exSelect   = document.getElementById('exampleSelect');
+
+function setStatus(msg, type) {
+    statusEl.textContent = msg;
+    statusEl.className = 'pg-status' + (type ? ' ' + type : '');
+}
+
+function updateLua() {
+    const code = dslxInput.value;
+    if (!code.trim()) { luaOutput.value = ''; return; }
+    try {
+        luaOutput.value = DSLXTranspiler.transpile(code);
+        setStatus('ready');
+    } catch (e) {
+        luaOutput.value = '-- transpiler error: ' + e.message;
+        setStatus('transpiler error', 'err');
+    }
+}
+
+function run() {
+    const luaCode = luaOutput.value.trim();
+    if (!luaCode) {
+        execOutput.textContent = '— nothing to run —';
+        execOutput.className = 'pg-output empty';
+        return;
+    }
+
+    setStatus('running…');
+    runBtn.disabled = true;
+
+    // Small delay so the UI updates before the synchronous Fengari execution
+    setTimeout(() => {
+        const result = runLua(luaCode);
+        runBtn.disabled = false;
+
+        if (result.ok) {
+            const out = result.output || '(no output)';
+            execOutput.textContent = out;
+            execOutput.className = 'pg-output';
+            setStatus('ok', 'ok');
+        } else {
+            execOutput.textContent = (result.output || '') + '\n[error] ' + result.error;
+            execOutput.className = 'pg-output error';
+            setStatus('error', 'err');
+        }
+    }, 10);
+}
+
+// Load example
+function loadExample(key) {
+    dslxInput.value = EXAMPLES[key] || EXAMPLES.custom;
+    updateLua();
+    execOutput.textContent = '— press Run to execute —';
+    execOutput.className = 'pg-output empty';
+    setStatus('ready');
+}
+
+// Events
+dslxInput.addEventListener('input', updateLua);
+runBtn.addEventListener('click', run);
+clearBtn.addEventListener('click', () => {
+    execOutput.textContent = '— press Run to execute —';
+    execOutput.className = 'pg-output empty';
+    setStatus('ready');
+});
+exSelect.addEventListener('change', () => loadExample(exSelect.value));
+
+// Tab key in textarea inserts spaces instead of moving focus
+dslxInput.addEventListener('keydown', e => {
+    if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = dslxInput.selectionStart;
+        const end   = dslxInput.selectionEnd;
+        dslxInput.value = dslxInput.value.substring(0, start) + '    ' + dslxInput.value.substring(end);
+        dslxInput.selectionStart = dslxInput.selectionEnd = start + 4;
+        updateLua();
+    }
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) run();
+});
+
+// Init
+loadExample('hello');
+
+// Fengari readiness check
+window.addEventListener('load', () => {
+    if (typeof fengari === 'undefined') {
+        setStatus('⚠ Fengari not loaded — Run disabled', 'err');
+        runBtn.disabled = true;
+    } else {
+        setStatus('ready');
+    }
+});
+</script>
+</body>
+</html>

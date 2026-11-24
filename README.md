@@ -17,7 +17,6 @@
 
 - [what is DSLX about?](#what-is-dslx-about)
 - [quick start](#quick-start)
-- [installation](#installation)
 - [how does it work?](#how-does-it-work)
   - [syntax](#syntax)
   - [importing .dslx through require](#importing-dslx-through-require)
@@ -38,11 +37,10 @@ DSLX (or Davi System: Lua XML) is a module that gives Lua the ability to interpr
 As of version 2.0 the module was renamed to `dslx` and rewritten on top of [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/): the parser turns the code into an AST (a `file` root node with the child nodes) and the runtime generates (and executes) pure Lua code from it.
 
 ```mermaid
-graph TD;
-    A("code in DSLX") --> B("parser (LPeg)");
-    B --> C("node file (AST)");
-    C --> D("runtime: make_new_code");
-    D --> E("pure Lua code");
+flowchart LR
+    A([".dslx"]) -->|source code| B["parser\n(LPeg)"]
+    B -->|AST| C["runtime\nmake_new_code"]
+    C -->|pure Lua| D(["load & execute"])
 ```
 
 ## quick start
@@ -51,6 +49,7 @@ graph TD;
 ```bash
 luarocks install daviluaxml
 ```
+> Requires Lua 5.5 and [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) (installed automatically).
 
 **2. Create a `.dslx` file**
 ```lua
@@ -75,14 +74,6 @@ Or compile without touching `require`:
 local compile = require("dslx.compile")
 compile({ input = "hello.dslx", run = true })
 ```
-
-## installation
-
-```bash
-luarocks install daviluaxml
-```
-
-Requirements: Lua 5.5, [inspect](https://github.com/kikito/inspect.lua), [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) (installed automatically as a dependency).
 
 ## how does it work?
 

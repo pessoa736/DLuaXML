@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DSLX — Davi System Lua-XML</title>
+<link rel="stylesheet" href="assets/style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+<script defer>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
+<style>
+  /* mermaid centering */
+  .mermaid { display:flex; justify-content:center; margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<!-- ── nav ── -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DSLX <span>docs</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Reference</a>
+    <a href="playground.html">Playground</a>
+    <a href="https://github.com/pessoa736/DLuaXML" class="hide-mobile">GitHub ↗</a>
+    <a href="https://luarocks.org/modules/pessoa736/daviluaxml" class="hide-mobile">LuaRocks ↗</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+
+<!-- ── sidebar ── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-group">
+    <div class="sidebar-title">Introduction</div>
+    <a href="#what-is-dslx">What is DSLX?</a>
+    <a href="#quick-start">Quick start</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#syntax">Syntax</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-title">API</div>
+    <a href="#api-parser">parser</a>
+    <a href="#api-parser-extend" class="sub">extending the parser</a>
+    <a href="#api-runtime">runtime</a>
+    <a href="#api-compile">compile</a>
+    <a href="#api-import">import</a>
+    <a href="#api-is-element">is_element</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-title">More</div>
+    <a href="#not-dslx">What DSLX is not</a>
+    <a href="#license">License</a>
+    <a href="playground.html">→ Playground</a>
+  </div>
+</nav>
+
+<!-- ── content ── -->
+<main class="docs-content">
+
+<!-- hero -->
+<section class="hero" id="what-is-dslx">
+  <h1>DSLX <span style="color:var(--muted);font-weight:400">· Davi System Lua-XML</span></h1>
+  <p>A module that gives Lua the ability to write XML-like syntax that compiles to pure Lua — similar to JSX in JavaScript.</p>
+  <div class="hero-badges">
+    <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml" alt="LuaRocks"/>
+    <img src="https://img.shields.io/badge/Lua-5.5-blue" alt="Lua 5.5"/>
+    <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"/>
+  </div>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="playground.html">Try it live</a>
+    <a class="btn btn-secondary" href="#quick-start">Quick start</a>
+    <a class="btn btn-secondary" href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+  </div>
+  <div class="callout warn" style="margin-top:20px">
+    <p>⚠ Experimental project. APIs may change without notice.</p>
+  </div>
+</section>
+
+<!-- quick start -->
+<section id="quick-start">
+  <h2>Quick start</h2>
+
+  <h4>1. Install</h4>
+  <pre><code class="language-bash">luarocks install daviluaxml</code></pre>
+  <p style="font-size:.875rem;color:var(--muted)">Requires Lua 5.5 and <a href="http://www.inf.puc-rio.br/~roberto/lpeg/">LPeg</a> (installed automatically).</p>
+
+  <h4>2. Create a <code>.dslx</code> file</h4>
+  <pre><code class="language-lua">-- hello.dslx
+local function greet(el)
+    return "Hello, " .. el.props.name .. "!"
+end
+
+&lt;greet name="world"/&gt;</code></pre>
+
+  <h4>3. Run it via <code>require</code></h4>
+  <pre><code class="language-lua">-- main.lua
+package.path = package.path .. ";./?.dslx"
+local dslx = require("dslx")   -- installs the .dslx searcher automatically
+print(require("hello"))         -- Hello, world!</code></pre>
+
+  <p>Or compile directly without touching <code>require</code>:</p>
+  <pre><code class="language-lua">local compile = require("dslx.compile")
+compile({ input = "hello.dslx", run = true })</code></pre>
+</section>
+
+<!-- how it works -->
+<section id="how-it-works">
+  <h2>How it works</h2>
+  <p>In a <code>.dslx</code> file, any function defined in the Lua environment can be called in XML format. The tag becomes a function call that receives a single table with the tag name, the props and the childrens:</p>
+
+  <pre><code class="language-lua">-- code in dslx
+local function soma(element)
+    local soma = 0
+    for _, valor in ipairs(element.childrens) do
+        soma = soma + valor
+    end
+    return soma + element.props.t
+end
+
+local pt = function(element) print(table.unpack(element.childrens)) end
+
+&lt;pt&gt;
+    &lt;soma t={9}&gt;
+        {1}{2}{3}
+    &lt;/soma&gt;
+&lt;/pt&gt;</code></pre>
+
+  <p>Becomes:</p>
+
+  <pre><code class="language-lua">-- generated Lua
+local function soma(element)
+    local soma = 0
+    for _, valor in ipairs(element.childrens) do
+        soma = soma + valor
+    end
+    return soma + element.props.t
+end
+
+local pt = function(element) print(table.unpack(element.childrens)) end
+
+pt{name="pt", props={}, childrens={soma{name="soma", props={t=9}, childrens={1, 2, 3}, node_type="full_element"}}, node_type="full_element"}</code></pre>
+
+  <p>The pipeline:</p>
+  <pre><code class="language-text">.dslx source  →  parser (LPeg)  →  AST (file node)  →  runtime make_new_code  →  pure Lua  →  execute</code></pre>
+</section>
+
+<!-- syntax -->
+<section id="syntax">
+  <h2>Syntax</h2>
+
+  <h3>Props</h3>
+  <p>Props accept strings, Lua expressions (in <code>{}</code>), and booleans (name only):</p>
+  <pre><code class="language-lua">&lt;card titulo="olá" largura={10} destaque&gt;...&lt;/card&gt;
+
+-- inside the handler:
+el.props.titulo   -- "olá"   (string)
+el.props.largura  -- 10      (Lua expression)
+el.props.destaque -- true    (boolean — prop name only)</code></pre>
+
+  <h3>Children</h3>
+  <p>Children can be literal text, Lua expressions, or nested elements:</p>
+  <pre><code class="language-lua">&lt;card&gt;
+    texto {40 + 2}
+    &lt;card/&gt;
+&lt;/card&gt;
+
+-- inside the handler:
+el.childrens[1]  -- "texto "  (literal text)
+el.childrens[2]  -- 42        (Lua expression)
+el.childrens[3]  -- table     (nested element, result of &lt;card/&gt;)</code></pre>
+
+  <div class="callout">
+    <p>A nested element runs <strong>before</strong> its parent (Lua evaluates table values before the constructor). If the nested element returns <code>nil</code>, the child simply doesn't exist in the childrens table.</p>
+  </div>
+
+  <h3>Self-closing vs full tag</h3>
+  <pre><code class="language-lua">-- self-closing
+local c = &lt;card titulo="hi"/&gt;
+
+-- full
+local c = &lt;card titulo="hi"&gt;
+    some text
+&lt;/card&gt;</code></pre>
+
+  <h3>AST node fields</h3>
+  <table class="type-table">
+    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+    <tr><td>name</td><td>string</td><td>Tag name</td></tr>
+    <tr><td>props</td><td>table</td><td>Key→value prop table</td></tr>
+    <tr><td>childrens</td><td>table</td><td>Sequential list of children (strings, values, or tables)</td></tr>
+    <tr><td>node_type</td><td>string</td><td><code>"full_element"</code> or <code>"element_self_close"</code></td></tr>
+    <tr><td>self_close</td><td>boolean?</td><td><code>true</code> for self-closing tags only</td></tr>
+  </table>
+</section>
+
+<!-- API: parser -->
+<section id="api-parser">
+  <h2>API — parser</h2>
+  <p>Parses DSLX code into an AST. The module is callable directly.</p>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser</span>(<span class="fn-arg">code: string</span>) <span class="fn-ret">→ DSLX_AST_Node</span></div>
+    <p class="api-desc">Parses <code>code</code> and returns the root AST node (<code>{node_type="file", children={...}}</code>). On failure, returns a table whose <code>tostring</code> is <code>"nil (Falha no Parser)"</code>.</p>
+    <pre><code class="language-lua">local parser = require("dslx.parser")
+local file = parser("local x = &lt;div/&gt;")
+-- file.node_type == "file"
+-- file.children == list of nodes</code></pre>
+  </div>
+
+  <h3>Node types</h3>
+  <table class="type-table">
+    <tr><th>node_type</th><th>Description</th></tr>
+    <tr><td>file</td><td>Root node. <code>children</code> holds all top-level nodes.</td></tr>
+    <tr><td>lua</td><td>Raw Lua code segment. <code>content</code> holds the source string.</td></tr>
+    <tr><td>script</td><td>A <code>{expr}</code> block. <code>content</code> is the expression.</td></tr>
+    <tr><td>full_element</td><td>A <code>&lt;tag&gt;...&lt;/tag&gt;</code> element.</td></tr>
+    <tr><td>element_self_close</td><td>A <code>&lt;tag/&gt;</code> element.</td></tr>
+    <tr><td>element_prop</td><td>Props table node (inside an element).</td></tr>
+  </table>
+
+  <h3>Parser properties</h3>
+  <dl class="api-params">
+    <dt>parser.patterns</dt><dd>Table of all registered LPeg patterns, keyed by name.</dd>
+    <dt>parser.lpeg</dt><dd>The LPeg module, pre-imported and available for building new patterns.</dd>
+    <dt>parser.parser_principal</dt><dd>Name of the pattern used as the entry point. Default: <code>"File_parser"</code>.</dd>
+  </dl>
+</section>
+
+<!-- API: extending parser -->
+<section id="api-parser-extend">
+  <h2>API — extending the parser</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:SetPattern</span>(<span class="fn-arg">name: string, pattern: lpeg_C_object</span>)</div>
+    <p class="api-desc">Registers (or replaces) a pattern under <code>name</code>.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:GetPattern</span>(<span class="fn-arg">name: string</span>) <span class="fn-ret">→ lpeg_C_object</span></div>
+    <p class="api-desc">Returns the registered pattern. Throws if the name doesn't exist.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:SetParserPrincipal</span>(<span class="fn-arg">name: string</span>)</div>
+    <p class="api-desc">Sets which pattern <code>:match()</code> and <code>:parser()</code> use as the entry point.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:match</span>(<span class="fn-arg">code: string</span>) <span class="fn-ret">→ any?</span></div>
+    <p class="api-desc">Runs the current principal pattern against <code>code</code>. Returns the raw LPeg match result (no metatable wrapping).</p>
+  </div>
+
+  <p>Example — strict parser that fails if there's leftover code after the last node:</p>
+  <pre><code class="language-lua">local parser = require("dslx.parser")
+
+parser:SetPattern("File_parser_strict",
+    parser:GetPattern("File_parser") * -parser.lpeg.P(1))
+
+parser:SetParserPrincipal("File_parser_strict")
+
+local file = parser("&lt;div/&gt;")  -- uses the new pattern</code></pre>
+
+  <div class="callout">
+    <p>Pattern composition is static: changing a base pattern (e.g. <code>element_name</code>) after load doesn't affect patterns already composed with it. Extend by composing on top of existing patterns, as shown above.</p>
+  </div>
+</section>
+
+<!-- API: runtime -->
+<section id="api-runtime">
+  <h2>API — runtime</h2>
+  <p>Generates Lua source code from an AST and optionally executes it.</p>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">runtime:SetHandler</span>(<span class="fn-arg">name: string | string[], handler: fun</span>)</div>
+    <p class="api-desc">Registers a custom code-generation handler for a <code>node_type</code>. <code>name</code> can be a single string or a table of strings (applied to all).</p>
+    <pre><code class="language-lua">local runtime = require("dslx.runtime")
+
+runtime:SetHandler("full_element", function(node, handlers)
+    -- return a custom Lua code string for this node
+    return node.element .. "()"
+end)</code></pre>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">runtime:expr</span>(<span class="fn-arg">node: DSLX_AST_Node | string, handlers?: table</span>) <span class="fn-ret">→ string</span></div>
+    <p class="api-desc">Returns the generated Lua source for a single node. Strings are quoted with <code>string.format("%q")</code>.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">runtime:make_new_code</span>(<span class="fn-arg">nodes: table, handlers?: table</span>) <span class="fn-ret">→ string</span></div>
+    <p class="api-desc">Generates the complete Lua source from a list of nodes (the <code>children</code> array of the root file node).</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">runtime:runtime</span>(<span class="fn-arg">file: DSLX_AST_Node, handlers?: table</span>) <span class="fn-ret">→ any</span></div>
+    <p class="api-desc">Generates code and executes it via <code>load()</code>. Accepts the root file node or a list of nodes directly. If the last node is an element, it's automatically wrapped with <code>return</code>.</p>
+    <pre><code class="language-lua">local parser  = require("dslx.parser")
+local runtime = require("dslx.runtime")
+
+local ast = parser([[
+    local function div(el) return el.childrens[1] end
+    &lt;div&gt;hello&lt;/div&gt;
+]])
+
+local result = runtime:runtime(ast)
+print(result)  -- hello</code></pre>
+  </div>
+
+  <h3>Built-in handlers</h3>
+  <table class="type-table">
+    <tr><th>Handler</th><th>Behavior</th></tr>
+    <tr><td>lua</td><td>Returns <code>node.content</code> as-is.</td></tr>
+    <tr><td>script</td><td>Returns <code>node.content</code> (the raw expression).</td></tr>
+    <tr><td>string</td><td>Returns <code>string.format("%q", str)</code>.</td></tr>
+    <tr><td>full_element, element_self_close</td><td>Serializes to <code>name{name=…, props={…}, childrens={…}, node_type=…}</code>.</td></tr>
+    <tr><td>props</td><td>Serializes the props table.</td></tr>
+    <tr><td>children</td><td>Serializes the children list (skips whitespace-only newline entries).</td></tr>
+    <tr><td>file</td><td>Calls <code>make_new_code</code> on <code>node.children</code>.</td></tr>
+  </table>
+</section>
+
+<!-- API: compile -->
+<section id="api-compile">
+  <h2>API — compile</h2>
+  <p>Compiles a <code>.dslx</code> file (or string) to Lua. The module is callable directly.</p>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">compile</span>(<span class="fn-arg">config: table, chunkname?: string</span>) <span class="fn-ret">→ string | nil</span></div>
+    <p class="api-desc">Compiles DSLX code according to <code>config</code>. Returns the generated Lua string when <code>tofile=false, run=false</code>; otherwise writes a file or runs it and returns <code>nil</code>.</p>
+  </div>
+
+  <h3>Config fields</h3>
+  <table class="type-table">
+    <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+    <tr><td>input</td><td>—</td><td>Path to the <code>.dslx</code> file, or the source code string when <code>asfile=false</code>.</td></tr>
+    <tr><td>asfile</td><td><code>true</code></td><td>Read <code>input</code> as a file path. Set to <code>false</code> to pass code directly.</td></tr>
+    <tr><td>tofile</td><td><code>true</code></td><td>Write output to a file. Set to <code>false</code> to return the code string.</td></tr>
+    <tr><td>run</td><td><code>false</code></td><td>Execute the result after generating it.</td></tr>
+    <tr><td>output_name</td><td>input name</td><td>Output file name without extension.</td></tr>
+    <tr><td>output_ext</td><td><code>".lua"</code></td><td>Output file extension.</td></tr>
+    <tr><td>output_dir</td><td><code>"."</code></td><td>Output directory.</td></tr>
+    <tr><td>relative_actual_file</td><td><code>false</code></td><td>Resolve paths relative to the calling file instead of CWD.</td></tr>
+  </table>
+
+  <pre><code class="language-lua">local compile = require("dslx.compile")
+
+-- Get the generated Lua code as a string
+local code = compile({ input = "hello.dslx", tofile = false, run = false })
+print(code)
+
+-- Compile to a .lua file in ./out/
+compile({ input = "hello.dslx", output_dir = "out", tofile = true })
+
+-- Compile and run inline
+compile({ input = "hello.dslx", tofile = false, run = true })</code></pre>
+</section>
+
+<!-- API: import -->
+<section id="api-import">
+  <h2>API — import</h2>
+  <p>Integrates DSLX into Lua's <code>require()</code> system. <code>require("dslx")</code> calls <code>import.install()</code> automatically.</p>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.install</span>(<span class="fn-arg">pos?: integer, opts?: table</span>) <span class="fn-ret">→ import</span></div>
+    <p class="api-desc">Inserts the DSLX searcher into <code>package.searchers</code> at position <code>pos</code> (default: 2). Safe to call multiple times. Returns the module for chaining.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.uninstall</span>(<span class="fn-arg">opts?: table</span>) <span class="fn-ret">→ import</span></div>
+    <p class="api-desc">Removes the DSLX searcher from <code>package.searchers</code>.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.loadfile</span>(<span class="fn-arg">filename: string, opts?: table</span>) <span class="fn-ret">→ chunk | nil, err</span></div>
+    <p class="api-desc">Reads, compiles, and returns a loadable chunk from a <code>.dslx</code> file. Respects the cache.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.reload</span>(<span class="fn-arg">name: string, opts?: table</span>) <span class="fn-ret">→ result, err</span></div>
+    <p class="api-desc">Clears <code>package.loaded[name]</code> and reloads the module from disk.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.clear</span>(<span class="fn-arg">opts?: table</span>)</div>
+    <p class="api-desc">Clears all loaded <code>.dslx</code> modules from <code>package.loaded</code> and the compilation cache.</p>
+  </div>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.syncPath</span>(<span class="fn-arg">)</span></div>
+    <p class="api-desc">Rebuilds <code>import.path</code> from the current <code>package.path</code> (replaces <code>?.lua</code> with <code>?.dslx</code>). Call after modifying <code>package.path</code> at runtime.</p>
+  </div>
+
+  <h3>Properties</h3>
+  <dl class="api-params">
+    <dt>import.path</dt><dd>The <code>package.path</code>-style path string used by the searcher for <code>.dslx</code> files.</dd>
+    <dt>import.use_cache</dt><dd><code>boolean</code> (default: <code>true</code>). Caches compiled chunks keyed by source content — a file is only recompiled when its source changes.</dd>
+    <dt>import.show_debug</dt><dd><code>boolean</code> (default: <code>false</code>). Prints debug info about searcher installs, loads, and cache state.</dd>
+  </dl>
+
+  <pre><code class="language-lua">package.path = package.path .. ";./src/?.dslx"
+local dslx = require("dslx")  -- installs the searcher automatically
+
+local ok = require("mymodule")  -- loads mymodule.dslx
+
+-- manual control
+dslx.import.reload("mymodule")  -- reload from disk
+dslx.import.clear()             -- wipe all cached .dslx modules
+dslx.import.uninstall()         -- remove from require()</code></pre>
+</section>
+
+<!-- API: is_element -->
+<section id="api-is-element">
+  <h2>API — is_element</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">is_element</span>(<span class="fn-arg">fn: function</span>) <span class="fn-ret">→ boolean, string?, number?</span></div>
+    <p class="api-desc">Global installed by <code>require("dslx")</code>. Validates whether a function is a valid DSLX element handler: it must be a function that accepts exactly 1 parameter (the element table).</p>
+    <dl class="api-params">
+      <dt>Returns</dt>
+      <dd><code>true</code> — function is valid.</dd>
+      <dd><code>false, error_message, nparams</code> — function is invalid.</dd>
+    </dl>
+    <pre><code class="language-lua">local dslx = require("dslx")
+
+local function card(el) return el.props.title end
+local function bad()   return "no args" end
+
+print(is_element(card))  -- true
+print(is_element(bad))   -- false   "função do elemento precisa receber o element_data."   0
+print(is_element(42))    -- false   "o elemento precisa ser uma função."</code></pre>
+  </div>
+</section>
+
+<!-- what DSLX is not -->
+<section id="not-dslx">
+  <h2>What DSLX is not</h2>
+  <ul>
+    <li><strong>Not HTML</strong> — HTML is a web language for pages. DSLX is Lua+XML, where XML is a rigid system-level structuring language, not a UI markup language.</li>
+    <li><strong>Not a Lua replacement</strong> — DSLX works alongside Lua. All <code>.dslx</code> code becomes pure Lua before execution; there's no separate runtime or VM.</li>
+    <li><strong>Not a template engine</strong> — DSLX doesn't generate strings or HTML output. The XML syntax maps directly to Lua function calls.</li>
+  </ul>
+</section>
+
+<!-- license -->
+<section id="license">
+  <h2>License</h2>
+  <p>MIT. Free to use, fork and modify — keeping the credits. <a href="https://github.com/pessoa736/DLuaXML/blob/main/LICENSE">View full license ↗</a></p>
+</section>
+
+</main>
+</div>
+
+<footer class="footer">
+  <span>DSLX · MIT License · <a href="https://github.com/pessoa736/DLuaXML">GitHub</a></span>
+  <span style="color:var(--muted)">Davi/Pessoa736 · 2026</span>
+</footer>
+
+<script>
+// Sidebar active link on scroll
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.sidebar a[href^="#"]');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    links.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+}, { passive: true });
+</script>
+</body>
+</html>

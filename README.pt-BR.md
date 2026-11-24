@@ -17,7 +17,6 @@
 
 - [sobre o que se trata o DSLX?](#sobre-o-que-se-trata-o-dslx)
 - [início rápido](#início-rápido)
-- [instalação](#instalação)
 - [como funciona?](#como-funciona)
   - [sintaxe](#sintaxe)
   - [importação dos .dslx através do require](#importação-dos-dslx-através-do-require)
@@ -38,11 +37,10 @@ DSLX (ou Davi System: Lua XML) é um módulo que fornece ao Lua a capacidade de 
 A partir da versão 2.0 o módulo foi renomeado para `dslx` e reescrito sobre [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/): o parser transforma o código em uma AST (um node raiz `file` com os nodes filhos) e o runtime gera (e executa) código Lua puro a partir dela.
 
 ```mermaid
-graph TD;
-    A("código em DSLX") --> B("parser (LPeg)");
-    B --> C("node file (AST)");
-    C --> D("runtime: make_new_code");
-    D --> E("código Lua puro");
+flowchart LR
+    A([".dslx"]) -->|código-fonte| B["parser\n(LPeg)"]
+    B -->|AST| C["runtime\nmake_new_code"]
+    C -->|Lua puro| D(["carregar & executar"])
 ```
 
 ## início rápido
@@ -51,6 +49,7 @@ graph TD;
 ```bash
 luarocks install daviluaxml
 ```
+> Requer Lua 5.5 e [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) (instalado automaticamente).
 
 **2. Crie um arquivo `.dslx`**
 ```lua
@@ -75,14 +74,6 @@ Ou compile diretamente sem mexer no `require`:
 local compile = require("dslx.compile")
 compile({ input = "hello.dslx", run = true })
 ```
-
-## instalação
-
-```bash
-luarocks install daviluaxml
-```
-
-Requisitos: Lua 5.5, [inspect](https://github.com/kikito/inspect.lua), [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) (instalado automaticamente como dependência).
 
 ## como funciona?
 
