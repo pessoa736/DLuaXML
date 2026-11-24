@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>import — DSLX docs</title>
+<meta name="description" content="DSLX import module — integrates DSLX into Lua's require() system."/>
+<meta property="og:title" content="import — DSLX docs"/>
+<meta property="og:description" content="Hooks into Lua's require() system so .dslx files are loaded transparently."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="../doc/DSLX_icon.png"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+
+<!-- ── nav ── -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DSLX <span>docs</span></a>
+  <span class="nav-version">v2.2-1</span>
+  <div class="nav-links">
+    <a href="index.html">Overview</a>
+    <a href="playground.html">Playground</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+</nav>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">Navigation</div>
+    <a href="index.html">Overview</a>
+    <a href="playground.html">Playground</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+  </div>
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">import</div>
+    <a href="#intro">Introduction</a>
+    <a href="#install">install</a>
+    <a href="#uninstall">uninstall</a>
+    <a href="#loadfile">loadfile</a>
+    <a href="#reload">reload</a>
+    <a href="#clear">clear</a>
+    <a href="#sync-path">syncPath</a>
+    <a href="#properties">Properties</a>
+    <a href="#example">Full example</a>
+  </div>
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">More</div>
+    <a href="index.html#is-element">is_element</a>
+    <a href="playground.html">→ Playground</a>
+  </div>
+</div>
+
+<div class="docs-layout">
+
+<!-- ── sidebar ── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-group">
+    <div class="sidebar-title">Overview</div>
+    <a href="index.html">Introduction</a>
+    <a href="index.html#quick-start">Quick start</a>
+    <a href="index.html#how-it-works">How it works</a>
+    <a href="index.html#syntax">Syntax</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-title">Modules</div>
+    <a href="parser.html">parser</a>
+    <a href="runtime.html">runtime</a>
+    <a href="compile.html">compile</a>
+    <a href="import.html" class="active">import</a>
+    <a href="#intro" class="sub">Introduction</a>
+    <a href="#install" class="sub">install</a>
+    <a href="#uninstall" class="sub">uninstall</a>
+    <a href="#loadfile" class="sub">loadfile</a>
+    <a href="#reload" class="sub">reload</a>
+    <a href="#clear" class="sub">clear</a>
+    <a href="#sync-path" class="sub">syncPath</a>
+    <a href="#properties" class="sub">Properties</a>
+    <a href="#example" class="sub">Full example</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-title">More</div>
+    <a href="index.html#is-element">is_element</a>
+    <a href="playground.html">→ Playground</a>
+  </div>
+</nav>
+
+<!-- ── content ── -->
+<main class="docs-content">
+
+<section id="intro">
+  <div class="hero-meta" style="margin-bottom:8px">
+    <h1>import</h1>
+    <span class="version-badge">dslx.import</span>
+  </div>
+  <p>Integrates DSLX into Lua's <code>require()</code> system. Called automatically by <code>require("dslx")</code>.</p>
+  <pre><code class="language-lua">local import = require("dslx.import")</code></pre>
+  <p>When you call <code>require("dslx")</code>, the import module installs the <code>.dslx</code> searcher into <code>package.searchers</code> automatically — you don't need to call <code>install()</code> yourself in the common case.</p>
+</section>
+
+<!-- install -->
+<section id="install">
+  <h2>install</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.install</span>(<span class="fn-arg">pos?: integer, opts?: table</span>) <span class="fn-ret">→ import</span></div>
+    <p class="api-desc">Inserts the DSLX searcher into <code>package.searchers</code> at position <code>pos</code> (default: 2). Safe to call multiple times — it won't insert duplicates. Returns <code>import</code> for chaining.</p>
+    <pre><code class="language-lua">local import = require("dslx.import")
+import.install()         -- insert at position 2 (default)
+import.install(3)        -- insert at position 3</code></pre>
+  </div>
+</section>
+
+<!-- uninstall -->
+<section id="uninstall">
+  <h2>uninstall</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.uninstall</span>(<span class="fn-arg">opts?: table</span>) <span class="fn-ret">→ import</span></div>
+    <p class="api-desc">Removes the DSLX searcher from <code>package.searchers</code>. After calling this, <code>require()</code> will no longer find <code>.dslx</code> files. Returns <code>import</code> for chaining.</p>
+    <pre><code class="language-lua">import.uninstall()  -- remove from require()</code></pre>
+  </div>
+</section>
+
+<!-- loadfile -->
+<section id="loadfile">
+  <h2>loadfile</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.loadfile</span>(<span class="fn-arg">filename: string, opts?: table</span>) <span class="fn-ret">→ chunk | nil, err</span></div>
+    <p class="api-desc">Reads, compiles, and returns a loadable chunk from a <code>.dslx</code> file. Respects the cache: if the file hasn't changed since the last load, the cached chunk is returned. On failure returns <code>nil</code> and an error string.</p>
+    <pre><code class="language-lua">local chunk, err = import.loadfile("mymodule.dslx")
+if chunk then
+    chunk()
+else
+    print("error:", err)
+end</code></pre>
+  </div>
+</section>
+
+<!-- reload -->
+<section id="reload">
+  <h2>reload</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.reload</span>(<span class="fn-arg">name: string, opts?: table</span>) <span class="fn-ret">→ result, err</span></div>
+    <p class="api-desc">Clears <code>package.loaded[name]</code> and reloads the module from disk, bypassing the cache. Useful during development when you want to pick up changes without restarting the Lua process.</p>
+    <pre><code class="language-lua">import.reload("mymodule")  -- reloads mymodule.dslx from disk</code></pre>
+  </div>
+</section>
+
+<!-- clear -->
+<section id="clear">
+  <h2>clear</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.clear</span>(<span class="fn-arg">opts?: table</span>)</div>
+    <p class="api-desc">Clears all loaded <code>.dslx</code> modules from <code>package.loaded</code> and wipes the compilation cache. After calling this, all <code>.dslx</code> modules will be recompiled on next <code>require()</code>.</p>
+    <pre><code class="language-lua">import.clear()  -- wipe all cached .dslx modules</code></pre>
+  </div>
+</section>
+
+<!-- syncPath -->
+<section id="sync-path">
+  <h2>syncPath</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">import.syncPath</span>()</div>
+    <p class="api-desc">Rebuilds <code>import.path</code> from the current <code>package.path</code>. Call this after modifying <code>package.path</code> at runtime to ensure the DSLX searcher picks up the new search paths.</p>
+    <pre><code class="language-lua">package.path = package.path .. ";./components/?.dslx"
+import.syncPath()  -- refresh import.path from updated package.path</code></pre>
+  </div>
+</section>
+
+<!-- properties -->
+<section id="properties">
+  <h2>Properties</h2>
+  <dl class="api-params">
+    <dt>import.path</dt>
+    <dd>The <code>package.path</code>-style string used by the searcher for <code>.dslx</code> files. Rebuilt from <code>package.path</code> on install and via <code>syncPath()</code>.</dd>
+    <dt>import.use_cache</dt>
+    <dd><code>boolean</code> (default: <code>true</code>). Caches compiled chunks — a file is only recompiled when its source changes on disk.</dd>
+    <dt>import.show_debug</dt>
+    <dd><code>boolean</code> (default: <code>false</code>). Prints debug info about searcher installs, file loads, and cache state to stdout.</dd>
+  </dl>
+</section>
+
+<!-- full example -->
+<section id="example">
+  <h2>Full example</h2>
+
+  <pre><code class="language-lua">-- main.lua
+
+-- Add .dslx files to the search path
+package.path = package.path .. ";./src/?.dslx"
+
+-- require("dslx") installs the searcher automatically
+local dslx = require("dslx")
+
+-- Load a .dslx module transparently via require()
+local ok = require("mymodule")  -- loads src/mymodule.dslx
+
+-- Reload from disk (bypasses cache)
+dslx.import.reload("mymodule")
+
+-- Wipe all cached .dslx modules
+dslx.import.clear()
+
+-- Remove the .dslx searcher from require()
+dslx.import.uninstall()
+
+-- After modifying package.path, sync the import searcher
+package.path = package.path .. ";./extra/?.dslx"
+dslx.import.syncPath()
+dslx.import.install()  -- re-install if previously uninstalled</code></pre>
+</section>
+
+</main>
+</div>
+
+<footer class="footer">
+  <span>DSLX · MIT License · <a href="https://github.com/pessoa736/DLuaXML">GitHub</a></span>
+  <span style="color:var(--muted)">Davi/Pessoa736 · 2026</span>
+</footer>
+
+<script>
+// ── highlight.js ──
+hljs.highlightAll();
+
+// ── copy buttons ──
+document.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', () => {
+        const code = pre.querySelector('code');
+        navigator.clipboard.writeText((code || pre).textContent.trim()).then(() => {
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    });
+    pre.appendChild(btn);
+});
+
+// ── mobile menu ──
+const toggle = document.getElementById('navToggle');
+const menu   = document.getElementById('mobileMenu');
+toggle.addEventListener('click', () => menu.classList.toggle('open'));
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+document.addEventListener('click', e => {
+    if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
+});
+
+// ── sidebar active link on scroll ──
+const sections = document.querySelectorAll('section[id]');
+const links    = document.querySelectorAll('.sidebar a[href^="#"]');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+}, { passive: true });
+</script>
+</body>
+</html>

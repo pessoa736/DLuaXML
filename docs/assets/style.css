@@ -308,6 +308,13 @@ pre:hover .copy-btn { opacity: 1; }
     display: flex; justify-content: space-between; align-items: center;
 }
 
+/* ── module cards ────────────────────────────────────────────────────────── */
+.module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+.module-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-decoration: none; transition: border-color .15s, background .15s; display: block; }
+.module-card:hover { border-color: var(--accent); background: var(--bg3); text-decoration: none; }
+.module-card-name { font-family: var(--mono); font-size: 1rem; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+.module-card-desc { font-size: .875rem; color: var(--muted); line-height: 1.4; }
+
 /* ── responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .sidebar { display: none; }
