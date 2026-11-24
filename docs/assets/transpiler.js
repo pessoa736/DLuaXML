@@ -109,10 +109,8 @@ function parseProps(code, pos) {
             } else if (code[pos] === '"' || code[pos] === "'") {
                 const q = code[pos++];
                 let str = '';
-                while (pos < code.length && code[pos] !== q) {
-                    if (code[pos] === '\\') str += code[pos++];
-                    if (pos < code.length) str += code[pos++];
-                }
+                // DSLX prop strings have no escape sequences (matches LPeg original)
+                while (pos < code.length && code[pos] !== q) str += code[pos++];
                 if (code[pos] === q) pos++;
                 props.push({ name, type: 'string', value: str });
             }

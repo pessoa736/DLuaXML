@@ -4,27 +4,60 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DSLX — Davi System Lua-XML</title>
+<meta name="description" content="DSLX documentation — JSX-like syntax for Lua that compiles to pure Lua code via LPeg."/>
+<meta property="og:title" content="DSLX — Davi System Lua-XML"/>
+<meta property="og:description" content="A module that gives Lua the ability to write XML-like syntax that compiles to pure Lua."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="../doc/DSLX_icon.png"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
-<script defer>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
-<style>
-  /* mermaid centering */
-  .mermaid { display:flex; justify-content:center; margin: 20px 0; }
-</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
 </head>
 <body>
 
 <!-- ── nav ── -->
 <nav class="nav">
   <a class="nav-logo" href="index.html">DSLX <span>docs</span></a>
+  <span class="nav-version">v2.2-1</span>
   <div class="nav-links">
     <a href="index.html" class="active">Reference</a>
     <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML" class="hide-mobile">GitHub ↗</a>
-    <a href="https://luarocks.org/modules/pessoa736/daviluaxml" class="hide-mobile">LuaRocks ↗</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    <a href="https://luarocks.org/modules/pessoa736/daviluaxml">LuaRocks ↗</a>
   </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
 </nav>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">Navigation</div>
+    <a href="index.html">Reference</a>
+    <a href="playground.html">Playground</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    <a href="https://luarocks.org/modules/pessoa736/daviluaxml">LuaRocks ↗</a>
+  </div>
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">Introduction</div>
+    <a href="#what-is-dslx">What is DSLX?</a>
+    <a href="#quick-start">Quick start</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#syntax">Syntax</a>
+  </div>
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">API</div>
+    <a href="#api-parser">parser</a>
+    <a href="#api-parser-extend">extending the parser</a>
+    <a href="#api-runtime">runtime</a>
+    <a href="#api-compile">compile</a>
+    <a href="#api-import">import</a>
+    <a href="#api-is-element">is_element</a>
+  </div>
+</div>
 
 <div class="docs-layout">
 
@@ -59,7 +92,10 @@
 
 <!-- hero -->
 <section class="hero" id="what-is-dslx">
-  <h1>DSLX <span style="color:var(--muted);font-weight:400">· Davi System Lua-XML</span></h1>
+  <div class="hero-meta">
+    <h1>DSLX</h1>
+    <span class="version-badge">v2.2-1</span>
+  </div>
   <p>A module that gives Lua the ability to write XML-like syntax that compiles to pure Lua — similar to JSX in JavaScript.</p>
   <div class="hero-badges">
     <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml" alt="LuaRocks"/>
@@ -101,6 +137,10 @@ print(require("hello"))         -- Hello, world!</code></pre>
   <p>Or compile directly without touching <code>require</code>:</p>
   <pre><code class="language-lua">local compile = require("dslx.compile")
 compile({ input = "hello.dslx", run = true })</code></pre>
+
+  <p style="margin-top:16px">
+    <a href="playground.html" class="btn btn-secondary" style="font-size:13px">→ Try these examples in the playground</a>
+  </p>
 </section>
 
 <!-- how it works -->
@@ -141,7 +181,12 @@ local pt = function(element) print(table.unpack(element.childrens)) end
 pt{name="pt", props={}, childrens={soma{name="soma", props={t=9}, childrens={1, 2, 3}, node_type="full_element"}}, node_type="full_element"}</code></pre>
 
   <p>The pipeline:</p>
-  <pre><code class="language-text">.dslx source  →  parser (LPeg)  →  AST (file node)  →  runtime make_new_code  →  pure Lua  →  execute</code></pre>
+  <div class="mermaid">
+flowchart LR
+    A([".dslx"]) -->|source code| B["parser\n(LPeg)"]
+    B -->|AST| C["runtime\nmake_new_code"]
+    C -->|pure Lua| D(["load & execute"])
+  </div>
 </section>
 
 <!-- syntax -->
@@ -362,7 +407,7 @@ compile({ input = "hello.dslx", tofile = false, run = true })</code></pre>
 
   <div class="api-card">
     <div class="api-sig"><span class="fn-name">import.install</span>(<span class="fn-arg">pos?: integer, opts?: table</span>) <span class="fn-ret">→ import</span></div>
-    <p class="api-desc">Inserts the DSLX searcher into <code>package.searchers</code> at position <code>pos</code> (default: 2). Safe to call multiple times. Returns the module for chaining.</p>
+    <p class="api-desc">Inserts the DSLX searcher into <code>package.searchers</code> at position <code>pos</code> (default: 2). Safe to call multiple times.</p>
   </div>
 
   <div class="api-card">
@@ -386,14 +431,14 @@ compile({ input = "hello.dslx", tofile = false, run = true })</code></pre>
   </div>
 
   <div class="api-card">
-    <div class="api-sig"><span class="fn-name">import.syncPath</span>(<span class="fn-arg">)</span></div>
-    <p class="api-desc">Rebuilds <code>import.path</code> from the current <code>package.path</code> (replaces <code>?.lua</code> with <code>?.dslx</code>). Call after modifying <code>package.path</code> at runtime.</p>
+    <div class="api-sig"><span class="fn-name">import.syncPath</span>()</div>
+    <p class="api-desc">Rebuilds <code>import.path</code> from the current <code>package.path</code>. Call after modifying <code>package.path</code> at runtime.</p>
   </div>
 
   <h3>Properties</h3>
   <dl class="api-params">
-    <dt>import.path</dt><dd>The <code>package.path</code>-style path string used by the searcher for <code>.dslx</code> files.</dd>
-    <dt>import.use_cache</dt><dd><code>boolean</code> (default: <code>true</code>). Caches compiled chunks keyed by source content — a file is only recompiled when its source changes.</dd>
+    <dt>import.path</dt><dd>The <code>package.path</code>-style string used by the searcher for <code>.dslx</code> files.</dd>
+    <dt>import.use_cache</dt><dd><code>boolean</code> (default: <code>true</code>). Caches compiled chunks — a file is only recompiled when its source changes.</dd>
     <dt>import.show_debug</dt><dd><code>boolean</code> (default: <code>false</code>). Prints debug info about searcher installs, loads, and cache state.</dd>
   </dl>
 
@@ -402,7 +447,6 @@ local dslx = require("dslx")  -- installs the searcher automatically
 
 local ok = require("mymodule")  -- loads mymodule.dslx
 
--- manual control
 dslx.import.reload("mymodule")  -- reload from disk
 dslx.import.clear()             -- wipe all cached .dslx modules
 dslx.import.uninstall()         -- remove from require()</code></pre>
@@ -414,7 +458,7 @@ dslx.import.uninstall()         -- remove from require()</code></pre>
 
   <div class="api-card">
     <div class="api-sig"><span class="fn-name">is_element</span>(<span class="fn-arg">fn: function</span>) <span class="fn-ret">→ boolean, string?, number?</span></div>
-    <p class="api-desc">Global installed by <code>require("dslx")</code>. Validates whether a function is a valid DSLX element handler: it must be a function that accepts exactly 1 parameter (the element table).</p>
+    <p class="api-desc">Global installed by <code>require("dslx")</code>. Validates whether a function is a valid DSLX element handler: it must accept exactly 1 parameter (the element table).</p>
     <dl class="api-params">
       <dt>Returns</dt>
       <dd><code>true</code> — function is valid.</dd>
@@ -426,7 +470,7 @@ local function card(el) return el.props.title end
 local function bad()   return "no args" end
 
 print(is_element(card))  -- true
-print(is_element(bad))   -- false   "função do elemento precisa receber o element_data."   0
+print(is_element(bad))   -- false   "..."   0
 print(is_element(42))    -- false   "o elemento precisa ser uma função."</code></pre>
   </div>
 </section>
@@ -456,17 +500,41 @@ print(is_element(42))    -- false   "o elemento precisa ser uma função."</code
 </footer>
 
 <script>
-// Sidebar active link on scroll
+// ── highlight.js ──
+hljs.highlightAll();
+
+// ── copy buttons ──
+document.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', () => {
+        const code = pre.querySelector('code');
+        navigator.clipboard.writeText((code || pre).textContent.trim()).then(() => {
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    });
+    pre.appendChild(btn);
+});
+
+// ── mobile menu ──
+const toggle = document.getElementById('navToggle');
+const menu   = document.getElementById('mobileMenu');
+toggle.addEventListener('click', () => menu.classList.toggle('open'));
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+document.addEventListener('click', e => {
+    if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
+});
+
+// ── sidebar active link on scroll ──
 const sections = document.querySelectorAll('section[id]');
-const links = document.querySelectorAll('.sidebar a[href^="#"]');
+const links    = document.querySelectorAll('.sidebar a[href^="#"]');
 window.addEventListener('scroll', () => {
     let current = '';
-    sections.forEach(s => {
-        if (window.scrollY >= s.offsetTop - 80) current = s.id;
-    });
-    links.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-    });
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
 }, { passive: true });
 </script>
 </body>

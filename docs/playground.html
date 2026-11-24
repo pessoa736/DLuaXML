@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Playground — DSLX</title>
+<meta name="description" content="Interactive DSLX playground — write DSLX code and run it live in the browser."/>
+<link rel="icon" type="image/png" href="../doc/DSLX_icon.png"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <script src="assets/transpiler.js"></script>
 <!-- Fengari: Lua 5.3 running in WebAssembly -->
@@ -34,6 +36,7 @@
       <option value="custom">Custom…</option>
     </select>
     <button class="pg-btn pg-btn-run" id="runBtn">▶ Run</button>
+    <span class="pg-hint">Ctrl+Enter</span>
     <button class="pg-btn pg-btn-clear" id="clearBtn">Clear output</button>
     <span class="pg-status" id="status">ready</span>
   </div>
