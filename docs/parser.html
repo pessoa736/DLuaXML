@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>parser — DSLX docs</title>
+<meta name="description" content="DSLX parser module — parses DSLX source into an AST using LPeg."/>
+<meta property="og:title" content="parser — DSLX docs"/>
+<meta property="og:description" content="Parses DSLX code into an AST using LPeg. Extensible with custom patterns."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="../doc/DSLX_icon.png"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+
+<!-- ── nav ── -->
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DSLX <span>docs</span></a>
+  <span class="nav-version">v2.2-1</span>
+  <div class="nav-links">
+    <a href="index.html">Overview</a>
+    <a href="playground.html">Playground</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+</nav>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">Navigation</div>
+    <a href="index.html">Overview</a>
+    <a href="playground.html">Playground</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+  </div>
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">parser</div>
+    <a href="#intro">Introduction</a>
+    <a href="#parser-call">parser(code)</a>
+    <a href="#node-types">Node types</a>
+    <a href="#properties">Properties</a>
+    <a href="#set-pattern">SetPattern</a>
+    <a href="#get-pattern">GetPattern</a>
+    <a href="#set-parser-principal">SetParserPrincipal</a>
+    <a href="#match">match</a>
+    <a href="#extending">Extending</a>
+  </div>
+  <div class="mobile-menu-group">
+    <div class="mobile-menu-title">More</div>
+    <a href="index.html#is-element">is_element</a>
+    <a href="playground.html">→ Playground</a>
+  </div>
+</div>
+
+<div class="docs-layout">
+
+<!-- ── sidebar ── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-group">
+    <div class="sidebar-title">Overview</div>
+    <a href="index.html">Introduction</a>
+    <a href="index.html#quick-start">Quick start</a>
+    <a href="index.html#how-it-works">How it works</a>
+    <a href="index.html#syntax">Syntax</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-title">Modules</div>
+    <a href="parser.html" class="active">parser</a>
+    <a href="#intro" class="sub">Introduction</a>
+    <a href="#parser-call" class="sub">parser(code)</a>
+    <a href="#node-types" class="sub">Node types</a>
+    <a href="#properties" class="sub">Properties</a>
+    <a href="#set-pattern" class="sub">SetPattern</a>
+    <a href="#get-pattern" class="sub">GetPattern</a>
+    <a href="#set-parser-principal" class="sub">SetParserPrincipal</a>
+    <a href="#match" class="sub">match</a>
+    <a href="#extending" class="sub">Extending</a>
+    <a href="runtime.html">runtime</a>
+    <a href="compile.html">compile</a>
+    <a href="import.html">import</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-title">More</div>
+    <a href="index.html#is-element">is_element</a>
+    <a href="playground.html">→ Playground</a>
+  </div>
+</nav>
+
+<!-- ── content ── -->
+<main class="docs-content">
+
+<section id="intro">
+  <div class="hero-meta" style="margin-bottom:8px">
+    <h1>parser</h1>
+    <span class="version-badge">dslx.parser</span>
+  </div>
+  <p>Parses DSLX code into an AST using LPeg. The module is callable directly.</p>
+  <pre><code class="language-lua">local parser = require("dslx.parser")</code></pre>
+</section>
+
+<!-- parser() call -->
+<section id="parser-call">
+  <h2>parser(code)</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser</span>(<span class="fn-arg">code: string</span>) <span class="fn-ret">→ DSLX_AST_Node</span></div>
+    <p class="api-desc">Parses <code>code</code> and returns the root AST node (<code>{node_type="file", children={...}}</code>). On failure, returns a table whose <code>tostring</code> is <code>"nil (Falha no Parser)"</code>.</p>
+    <pre><code class="language-lua">local parser = require("dslx.parser")
+
+local file = parser("local x = &lt;div/&gt;")
+-- file.node_type == "file"
+-- file.children  == list of nodes</code></pre>
+  </div>
+</section>
+
+<!-- node types -->
+<section id="node-types">
+  <h2>Node types</h2>
+  <table class="type-table">
+    <tr><th>node_type</th><th>Description</th></tr>
+    <tr><td>file</td><td>Root node. <code>children</code> holds all top-level nodes.</td></tr>
+    <tr><td>lua</td><td>Raw Lua code segment. <code>content</code> holds the source string.</td></tr>
+    <tr><td>script</td><td>A <code>{expr}</code> block. <code>content</code> is the expression.</td></tr>
+    <tr><td>full_element</td><td>A <code>&lt;tag&gt;...&lt;/tag&gt;</code> element.</td></tr>
+    <tr><td>element_self_close</td><td>A <code>&lt;tag/&gt;</code> element.</td></tr>
+    <tr><td>element_prop</td><td>Props table node (inside an element).</td></tr>
+  </table>
+</section>
+
+<!-- properties -->
+<section id="properties">
+  <h2>Parser properties</h2>
+  <dl class="api-params">
+    <dt>parser.patterns</dt>
+    <dd>Table of all registered LPeg patterns, keyed by name.</dd>
+    <dt>parser.lpeg</dt>
+    <dd>The LPeg module, pre-imported and available for building new patterns.</dd>
+    <dt>parser.parser_principal</dt>
+    <dd>Name of the pattern used as the entry point. Default: <code>"File_parser"</code>.</dd>
+  </dl>
+</section>
+
+<!-- SetPattern -->
+<section id="set-pattern">
+  <h2>SetPattern</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:SetPattern</span>(<span class="fn-arg">name: string, pattern: lpeg_C_object</span>)</div>
+    <p class="api-desc">Registers (or replaces) a pattern under <code>name</code>. The pattern must be a captured LPeg object (<code>lpeg.C(...)</code> or equivalent).</p>
+    <pre><code class="language-lua">local parser = require("dslx.parser")
+local lpeg   = parser.lpeg
+
+-- Register a custom pattern that matches a bare identifier
+parser:SetPattern("my_ident", lpeg.C(lpeg.R("az","AZ")^1))</code></pre>
+  </div>
+</section>
+
+<!-- GetPattern -->
+<section id="get-pattern">
+  <h2>GetPattern</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:GetPattern</span>(<span class="fn-arg">name: string</span>) <span class="fn-ret">→ lpeg_C_object</span></div>
+    <p class="api-desc">Returns the registered pattern for <code>name</code>. Throws an error if the pattern doesn't exist.</p>
+    <pre><code class="language-lua">local base = parser:GetPattern("File_parser")</code></pre>
+  </div>
+</section>
+
+<!-- SetParserPrincipal -->
+<section id="set-parser-principal">
+  <h2>SetParserPrincipal</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:SetParserPrincipal</span>(<span class="fn-arg">name: string</span>)</div>
+    <p class="api-desc">Sets which pattern <code>:match()</code> and the callable form <code>parser(code)</code> use as the entry point. <code>name</code> must already be registered via <code>:SetPattern()</code>.</p>
+    <pre><code class="language-lua">parser:SetParserPrincipal("File_parser_strict")</code></pre>
+  </div>
+</section>
+
+<!-- match -->
+<section id="match">
+  <h2>match</h2>
+
+  <div class="api-card">
+    <div class="api-sig"><span class="fn-name">parser:match</span>(<span class="fn-arg">code: string</span>) <span class="fn-ret">→ any?</span></div>
+    <p class="api-desc">Runs the current principal pattern against <code>code</code>. Returns the raw LPeg match result without any metatable wrapping. Useful when you've set a custom principal pattern.</p>
+    <pre><code class="language-lua">local raw = parser:match("&lt;div/&gt;")</code></pre>
+  </div>
+</section>
+
+<!-- extending -->
+<section id="extending">
+  <h2>Extending the parser</h2>
+
+  <p>Use the pattern API to compose new entry points on top of existing ones. The example below creates a strict parser that fails if there is any leftover input after the last node:</p>
+
+  <pre><code class="language-lua">local parser = require("dslx.parser")
+
+parser:SetPattern("File_parser_strict",
+    parser:GetPattern("File_parser") * -parser.lpeg.P(1))
+
+parser:SetParserPrincipal("File_parser_strict")
+
+local file = parser("&lt;div/&gt;")  -- uses the strict pattern</code></pre>
+
+  <div class="callout">
+    <p>Pattern composition is static: changing a base pattern (e.g. <code>element_name</code>) after load does <strong>not</strong> affect patterns already composed with it. Extend by composing on top of existing named patterns, as shown above.</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer class="footer">
+  <span>DSLX · MIT License · <a href="https://github.com/pessoa736/DLuaXML">GitHub</a></span>
+  <span style="color:var(--muted)">Davi/Pessoa736 · 2026</span>
+</footer>
+
+<script>
+// ── highlight.js ──
+hljs.highlightAll();
+
+// ── copy buttons ──
+document.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', () => {
+        const code = pre.querySelector('code');
+        navigator.clipboard.writeText((code || pre).textContent.trim()).then(() => {
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    });
+    pre.appendChild(btn);
+});
+
+// ── mobile menu ──
+const toggle = document.getElementById('navToggle');
+const menu   = document.getElementById('mobileMenu');
+toggle.addEventListener('click', () => menu.classList.toggle('open'));
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+document.addEventListener('click', e => {
+    if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
+});
+
+// ── sidebar active link on scroll ──
+const sections = document.querySelectorAll('section[id]');
+const links    = document.querySelectorAll('.sidebar a[href^="#"]');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+}, { passive: true });
+</script>
+</body>
+</html>
