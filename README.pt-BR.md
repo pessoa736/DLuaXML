@@ -195,7 +195,7 @@ local file = parser("<div/>") -- agora usa o pattern novo
 
 ### runtime
 
-- `runtime:addHandler(name, func)` — registra um handler customizado por `node_type` (`name` pode ser uma string ou uma tabela de nomes)
+- `runtime:SetHandler(name, func)` — registra um handler customizado por `node_type` (`name` pode ser uma string ou uma tabela de nomes)
 - `runtime:expr(node, handlers)` — devolve o código Lua de um node
 - `runtime:make_new_code(nodes, handlers)` — devolve o código Lua completo
 - `runtime:runtime(file, handlers)` — compila e executa o código (aceita o node `file` retornado pelo parser ou uma lista de nodes)

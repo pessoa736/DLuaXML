@@ -195,7 +195,7 @@ local file = parser("<div/>") -- now uses the new pattern
 
 ### runtime
 
-- `runtime:addHandler(name, func)` — registers a custom handler per `node_type` (`name` can be a string or a table of names)
+- `runtime:SetHandler(name, func)` — registers a custom handler per `node_type` (`name` can be a string or a table of names)
 - `runtime:expr(node, handlers)` — returns the Lua code of a node
 - `runtime:make_new_code(nodes, handlers)` — returns the complete Lua code
 - `runtime:runtime(file, handlers)` — compiles and executes the code (accepts the `file` node returned by the parser or a list of nodes)
