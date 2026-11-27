@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" role="img" aria-label="DSLX">
+  <!-- Small DSLX mark (favicon, nav): the crescent alone, with thicker lines so it reads at 16-32 px. -->
+  <defs>
+    <radialGradient id="sky" cx="0.42" cy="0.58" r="0.62">
+      <stop offset="0" stop-color="#2b5560"/>
+      <stop offset="0.55" stop-color="#14303a"/>
+      <stop offset="1" stop-color="#0a141a"/>
+    </radialGradient>
+  </defs>
+  <circle cx="250" cy="250" r="240" fill="url(#sky)"/>
+  <path d="M217.8,90.2 A172,172 0 1 0 389.1,316.6 A142,142 0 0 1 217.8,90.2 Z" fill="#e6e1cf" fill-opacity=".9"/>
+</svg>

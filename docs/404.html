@@ -4,22 +4,26 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>404 — DSLX</title>
+<link rel="icon" type="image/svg+xml" href="assets/dslx-mark.svg"/>
 <link rel="icon" type="image/png" href="assets/DSLX_icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"/>
 <link rel="stylesheet" href="assets/style.css"/>
 </head>
 <body>
 <nav class="nav">
-  <a class="nav-logo" href="index.html"><img src="assets/DSLX_icon.png" alt=""/>DSLX <span>docs</span></a>
+  <a class="nav-logo" href="index.html"><img src="assets/dslx-mark.svg" alt=""/>DSLX <span>docs</span></a>
   <div class="nav-links">
-    <a href="index.html">Reference</a>
+    <a href="overview.html">Reference</a>
     <a href="playground.html">Playground</a>
   </div>
 </nav>
 <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding-top:var(--nav-h);text-align:center;gap:16px">
-  <div style="font-size:4rem;font-weight:700;color:var(--border)">404</div>
-  <div style="font-size:1.1rem;color:var(--muted)">Page not found</div>
+  <div class="not-found-code">404</div>
+  <div style="font-size:1.1rem;color:var(--muted)">There is no page at this address.</div>
   <div style="display:flex;gap:10px;margin-top:8px">
-    <a class="btn btn-primary" href="index.html">Go to docs</a>
+    <a class="btn btn-primary" href="overview.html">Go to docs</a>
     <a class="btn btn-secondary" href="playground.html">Playground</a>
   </div>
 </div>

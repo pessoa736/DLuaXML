@@ -8,21 +8,24 @@
 <meta property="og:title" content="parser — DSLX docs"/>
 <meta property="og:description" content="Parses DSLX code into an AST using LPeg. Extensible with custom patterns."/>
 <meta property="og:type" content="website"/>
+<link rel="icon" type="image/svg+xml" href="assets/dslx-mark.svg"/>
 <link rel="icon" type="image/png" href="assets/DSLX_icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"/>
 <link rel="stylesheet" href="assets/style.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
 
 <!-- ── nav ── -->
 <nav class="nav">
-  <a class="nav-logo" href="index.html"><img src="assets/DSLX_icon.png" alt=""/>DSLX <span>docs</span></a>
+  <a class="nav-logo" href="index.html"><img src="assets/dslx-mark.svg" alt=""/>DSLX <span>docs</span></a>
   <span class="nav-version">v2.2-1</span>
   <div class="nav-links">
-    <a href="index.html">Overview</a>
+    <a href="overview.html">Overview</a>
     <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
   <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
 </nav>
@@ -31,9 +34,9 @@
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-group">
     <div class="mobile-menu-title">Navigation</div>
-    <a href="index.html">Overview</a>
+    <a href="overview.html">Overview</a>
     <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
   <div class="mobile-menu-group">
     <div class="mobile-menu-title">parser</div>
@@ -49,8 +52,8 @@
   </div>
   <div class="mobile-menu-group">
     <div class="mobile-menu-title">More</div>
-    <a href="index.html#is-element">is_element</a>
-    <a href="playground.html">→ Playground</a>
+    <a href="overview.html#is-element">is_element</a>
+    <a href="playground.html">Playground</a>
   </div>
 </div>
 
@@ -60,10 +63,10 @@
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-group">
     <div class="sidebar-title">Overview</div>
-    <a href="index.html">Introduction</a>
-    <a href="index.html#quick-start">Quick start</a>
-    <a href="index.html#how-it-works">How it works</a>
-    <a href="index.html#syntax">Syntax</a>
+    <a href="overview.html">Introduction</a>
+    <a href="overview.html#quick-start">Quick start</a>
+    <a href="overview.html#how-it-works">How it works</a>
+    <a href="overview.html#syntax">Syntax</a>
   </div>
   <div class="sidebar-group">
     <div class="sidebar-title">Modules</div>
@@ -83,8 +86,8 @@
   </div>
   <div class="sidebar-group">
     <div class="sidebar-title">More</div>
-    <a href="index.html#is-element">is_element</a>
-    <a href="playground.html">→ Playground</a>
+    <a href="overview.html#is-element">is_element</a>
+    <a href="playground.html">Playground</a>
   </div>
 </nav>
 
@@ -214,8 +217,9 @@ local file = parser("&lt;div/&gt;")  -- uses the strict pattern</code></pre>
 </div>
 
 <footer class="footer">
-  <span>DSLX · MIT License · <a href="https://github.com/pessoa736/DLuaXML">GitHub</a></span>
-  <span style="color:var(--muted)">Davi/Pessoa736 · 2026</span>
+  <span>DSLX is MIT licensed. Source on <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>.</span>
+  <span style="color:var(--muted)">Davi/Pessoa736, 2026</span>
+  <small class="credit">The DSLX library code was written by Davi. This website and its documentation were made with <a href="https://hermes-agent.nousresearch.com">Hermes</a>, an AI agent.</small>
 </footer>
 
 <script>

@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Playground — DSLX</title>
 <meta name="description" content="Interactive DSLX playground — write DSLX code and run it live in the browser."/>
+<link rel="icon" type="image/svg+xml" href="assets/dslx-mark.svg"/>
 <link rel="icon" type="image/png" href="assets/DSLX_icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <script src="assets/transpiler.js"></script>
 <!-- Fengari: Lua 5.3 running in WebAssembly -->
@@ -15,11 +19,11 @@
 
 <!-- ── nav ── -->
 <nav class="nav">
-  <a class="nav-logo" href="index.html"><img src="assets/DSLX_icon.png" alt=""/>DSLX <span>playground</span></a>
+  <a class="nav-logo" href="index.html"><img src="assets/dslx-mark.svg" alt=""/>DSLX <span>playground</span></a>
   <div class="nav-links">
-    <a href="index.html" class="hide-mobile">Reference</a>
+    <a href="overview.html" class="hide-mobile">Reference</a>
     <a href="playground.html" class="active">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML" class="hide-mobile">GitHub ↗</a>
+    <a href="https://github.com/pessoa736/DLuaXML" class="hide-mobile">GitHub</a>
   </div>
 </nav>
 
@@ -46,19 +50,19 @@
 
     <!-- DSLX input -->
     <div class="pg-panel">
-      <div class="pg-panel-header"><span class="dot" style="background:#f78166"></span>DSLX input</div>
+      <div class="pg-panel-header"><span class="dot" style="background:#c9b98f"></span>DSLX input</div>
       <textarea class="pg-editor" id="dslxInput" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
     </div>
 
     <!-- Generated Lua -->
     <div class="pg-panel">
-      <div class="pg-panel-header"><span class="dot" style="background:#58a6ff"></span>Generated Lua</div>
+      <div class="pg-panel-header"><span class="dot" style="background:#9cc3b9"></span>Generated Lua</div>
       <textarea class="pg-output" id="luaOutput" readonly spellcheck="false"></textarea>
     </div>
 
     <!-- Execution output -->
     <div class="pg-panel">
-      <div class="pg-panel-header"><span class="dot" style="background:#3fb950"></span>Output</div>
+      <div class="pg-panel-header"><span class="dot" style="background:#a9c9a0"></span>Output</div>
       <pre class="pg-output empty" id="execOutput">— press Run to execute —</pre>
     </div>
 
