@@ -9,12 +9,18 @@
 <meta property="og:description" content="A module that gives Lua the ability to write XML-like syntax that compiles to pure Lua."/>
 <meta property="og:type" content="website"/>
 <link rel="icon" type="image/png" href="assets/DSLX_icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"/>
 <link rel="stylesheet" href="assets/style.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+    background: '#0e1a22', primaryColor: '#0a141a', primaryBorderColor: '#9cc3b9',
+    primaryTextColor: '#e6e1cf', lineColor: '#93a7aa', edgeLabelBackground: '#0e1a22',
+    fontFamily: 'Atkinson Hyperlegible, sans-serif'
+  } });
 </script>
 </head>
 <body>
@@ -26,7 +32,7 @@
   <div class="nav-links">
     <a href="overview.html" class="active">Overview</a>
     <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
   <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
 </nav>
@@ -37,7 +43,7 @@
     <div class="mobile-menu-title">Navigation</div>
     <a href="overview.html">Overview</a>
     <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
   <div class="mobile-menu-group">
     <div class="mobile-menu-title">Overview</div>
@@ -56,7 +62,7 @@
   <div class="mobile-menu-group">
     <div class="mobile-menu-title">More</div>
     <a href="#is-element">is_element</a>
-    <a href="playground.html">→ Playground</a>
+    <a href="playground.html">Playground</a>
   </div>
 </div>
 
@@ -81,7 +87,7 @@
   <div class="sidebar-group">
     <div class="sidebar-title">More</div>
     <a href="#is-element">is_element</a>
-    <a href="playground.html">→ Playground</a>
+    <a href="playground.html">Playground</a>
   </div>
 </nav>
 
@@ -96,14 +102,14 @@
   </div>
   <p>A module that gives Lua the ability to write XML-like syntax that compiles to pure Lua — similar to JSX in JavaScript.</p>
   <div class="hero-badges">
-    <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml" alt="LuaRocks"/>
-    <img src="https://img.shields.io/badge/Lua-5.5-blue" alt="Lua 5.5"/>
-    <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"/>
+    <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml?color=17303a&labelColor=0a141a" alt="LuaRocks"/>
+    <img src="https://img.shields.io/badge/Lua-5.5-17303a?labelColor=0a141a" alt="Lua 5.5"/>
+    <img src="https://img.shields.io/badge/license-MIT-17303a?labelColor=0a141a" alt="MIT"/>
   </div>
   <div class="hero-actions">
     <a class="btn btn-primary" href="playground.html">Try it live</a>
     <a class="btn btn-secondary" href="#quick-start">Quick start</a>
-    <a class="btn btn-secondary" href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    <a class="btn btn-secondary" href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
   <div class="callout warn" style="margin-top:20px">
     <p>⚠ Experimental project. APIs may change without notice.</p>
@@ -137,7 +143,7 @@ print((require("hello")))       -- Hello, world!</code></pre>
 compile({ input = "hello.dslx", run = true })</code></pre>
 
   <p style="margin-top:16px">
-    <a href="playground.html" class="btn btn-secondary" style="font-size:13px">→ Try these examples in the playground</a>
+    <a href="playground.html" class="btn btn-secondary" style="font-size:13px">Try these examples in the playground</a>
   </p>
 </section>
 
@@ -297,15 +303,15 @@ print(is_element(42))    -- false   "o elemento precisa ser uma função."</code
 <!-- license -->
 <section id="license">
   <h2>License</h2>
-  <p>MIT. Free to use, fork and modify — keeping the credits. <a href="https://github.com/pessoa736/DLuaXML/blob/main/LICENSE">View full license ↗</a></p>
+  <p>MIT. Free to use, fork and modify — keeping the credits. <a href="https://github.com/pessoa736/DLuaXML/blob/main/LICENSE">Read the full license</a></p>
 </section>
 
 </main>
 </div>
 
 <footer class="footer">
-  <span>DSLX · MIT License · <a href="https://github.com/pessoa736/DLuaXML">GitHub</a></span>
-  <span style="color:var(--muted)">Davi/Pessoa736 · 2026</span>
+  <span>DSLX is MIT licensed. Source on <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>.</span>
+  <span style="color:var(--muted)">Davi/Pessoa736, 2026</span>
 </footer>
 
 <script>
