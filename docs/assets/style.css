@@ -359,3 +359,28 @@ pre:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
     .pg-panel:last-child { border-bottom: none; }
     .footer { padding: 20px 24px; flex-direction: column; text-align: center; }
 }
+
+/* ── scrollbars ──────────────────────────────────────────── */
+/* Thin "tide" bars that light up to mist on hover, instead of the system's grey bar.
+   scrollbar-color covers Firefox and Chrome 121+; the ::-webkit rules cover Safari. */
+pre, .sidebar, .mobile-menu, .pg-editor, .pg-output, .type-table-wrap {
+    scrollbar-width: thin;
+    scrollbar-color: var(--tide) transparent;
+}
+pre:hover, .sidebar:hover, .pg-editor:hover, .pg-output:hover {
+    scrollbar-color: var(--fog) transparent;
+}
+pre::-webkit-scrollbar, .sidebar::-webkit-scrollbar, .mobile-menu::-webkit-scrollbar,
+.pg-editor::-webkit-scrollbar, .pg-output::-webkit-scrollbar { width: 8px; height: 8px; }
+pre::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-track, .mobile-menu::-webkit-scrollbar-track,
+.pg-editor::-webkit-scrollbar-track, .pg-output::-webkit-scrollbar-track { background: transparent; }
+pre::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb, .mobile-menu::-webkit-scrollbar-thumb,
+.pg-editor::-webkit-scrollbar-thumb, .pg-output::-webkit-scrollbar-thumb {
+    background: var(--tide); border-radius: 4px;
+    border: 2px solid transparent; background-clip: padding-box;
+}
+pre:hover::-webkit-scrollbar-thumb, .sidebar:hover::-webkit-scrollbar-thumb,
+.pg-editor:hover::-webkit-scrollbar-thumb, .pg-output:hover::-webkit-scrollbar-thumb { background-color: var(--fog); }
+.pg-editor::-webkit-scrollbar-corner, .pg-output::-webkit-scrollbar-corner { background: transparent; }
+/* the page's own scrollbar: dark, in the same colours */
+html { color-scheme: dark; scrollbar-color: var(--tide) var(--abyss); }

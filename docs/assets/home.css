@@ -212,3 +212,17 @@ p code, h3 code {
     .install { width: auto; justify-content: space-between; }
     .install code { font-size: 13.5px; }
 }
+
+/* Code blocks that are wider than their box: a thin "tide" scrollbar instead of the
+   system's grey one; it brightens when the pointer is over the block. */
+.use-code pre { scrollbar-width: thin; scrollbar-color: var(--tide) transparent; }
+.use-code pre:hover { scrollbar-color: #66808a transparent; }
+.use-code pre::-webkit-scrollbar { height: 8px; }
+.use-code pre::-webkit-scrollbar-track { background: transparent; }
+.use-code pre::-webkit-scrollbar-thumb {
+    background: var(--tide); border-radius: 4px;
+    border: 2px solid transparent; background-clip: padding-box;
+}
+.use-code pre:hover::-webkit-scrollbar-thumb { background-color: #66808a; }
+/* the page's own scrollbar: dark, in the same colours */
+html { color-scheme: dark; scrollbar-color: var(--tide) var(--abyss); }
