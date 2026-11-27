@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" role="img" aria-label="DSLX">
+  <!-- DSLX logo: a crescent moon ("lua") with the name on a tag in its hollow.
+       Palette from the website: abyss #0a141a, tide #14303a, moon #e6e1cf. -->
+  <defs>
+    <radialGradient id="sky" cx="0.42" cy="0.58" r="0.62">
+      <stop offset="0" stop-color="#2b5560"/>
+      <stop offset="0.55" stop-color="#14303a"/>
+      <stop offset="1" stop-color="#0a141a"/>
+    </radialGradient>
+  </defs>
+  <circle cx="250" cy="250" r="236" fill="url(#sky)"/>
+  <circle cx="250" cy="250" r="236" fill="none" stroke="#e6e1cf" stroke-opacity=".14" stroke-width="3"/>
+  <path d="M221.2,78.0 A178,178 0 1 0 363.9,363.4 A160,160 0 0 1 221.2,78.0 Z" fill="#e6e1cf" fill-opacity=".07"
+        stroke="#e6e1cf" stroke-width="11" stroke-linejoin="round"/>
+  <g fill="none" stroke="#e6e1cf" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="200" y="196" width="196" height="76" rx="16"/>
+    <!-- D -->
+    <path d="M222,214 h10 a20,20 0 0 1 0,40 h-10 z"/>
+    <!-- S -->
+    <path d="M293,220 C289,215 283,214 278,214 C270,214 265,218 265,224.5 C265,232 272,233 279,234 C287,235 294,237 294,244.5 C294,251 288,254 280,254 C274,254 268,252 264,248"/>
+    <!-- L -->
+    <path d="M311,214 V254 H335"/>
+    <!-- X -->
+    <path d="M350,214 L376,254 M376,214 L350,254"/>
+  </g>
+</svg>

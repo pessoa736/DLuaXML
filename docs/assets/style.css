@@ -338,6 +338,9 @@ pre:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
     border-top: 1px solid var(--tide);
     color: var(--mist); font-size: 14px;
 }
+.footer { flex-wrap: wrap; }
+.footer .credit { flex-basis: 100%; font-size: 12.5px; color: var(--fog); }
+.footer .credit a { color: var(--mist); }
 .not-found-code { font: 400 7rem/1 var(--display); color: var(--moon); }
 
 /* ── narrow screens ──────────────────────────────────────── */

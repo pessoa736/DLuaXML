@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/DSLX_icon.png" width="112" alt="logo do DSLX"/>
+  <img src="docs/assets/dslx-logo.svg" width="112" alt="logo do DSLX"/>
 </p>
 
 <h1 align="center">DSLX</h1>
