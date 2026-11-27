@@ -3,348 +3,297 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DSLX — Davi System Lua-XML</title>
-<meta name="description" content="DSLX documentation — JSX-like syntax for Lua that compiles to pure Lua code via LPeg."/>
-<meta property="og:title" content="DSLX — Davi System Lua-XML"/>
-<meta property="og:description" content="A module that gives Lua the ability to write XML-like syntax that compiles to pure Lua."/>
-<meta property="og:type" content="website"/>
+<title>DSLX — Davi System: Lua XML</title>
+<meta name="description" content="DSLX: a JSX-like syntax for Lua. Write XML tags that become Lua function calls."/>
 <link rel="icon" type="image/png" href="assets/DSLX_icon.png"/>
-<link rel="stylesheet" href="assets/style.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
-</script>
+<link rel="stylesheet" href="assets/home.css"/>
 </head>
 <body>
 
-<!-- ── nav ── -->
-<nav class="nav">
-  <a class="nav-logo" href="index.html"><img src="assets/DSLX_icon.png" alt=""/>DSLX <span>docs</span></a>
-  <span class="nav-version">v2.2-1</span>
-  <div class="nav-links">
-    <a href="index.html" class="active">Overview</a>
-    <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
-  </div>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
-</nav>
+<!-- ── hero: animated melancholic landscape behind the title ── -->
+<header class="hero">
+  <canvas id="sky" aria-hidden="true"></canvas>
 
-<!-- mobile menu -->
-<div class="mobile-menu" id="mobileMenu">
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">Navigation</div>
-    <a href="index.html">Overview</a>
-    <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
-  </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">Overview</div>
-    <a href="#what-is-dslx">Introduction</a>
-    <a href="#quick-start">Quick start</a>
-    <a href="#how-it-works">How it works</a>
-    <a href="#syntax">Syntax</a>
-  </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">Modules</div>
-    <a href="parser.html">parser</a>
-    <a href="runtime.html">runtime</a>
-    <a href="compile.html">compile</a>
-    <a href="import.html">import</a>
-  </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">More</div>
-    <a href="#is-element">is_element</a>
-    <a href="playground.html">→ Playground</a>
-  </div>
-</div>
+  <nav class="home-nav">
+    <a class="home-brand" href="index.html"><img src="assets/DSLX_icon.png" alt=""/>DSLX</a>
+    <div class="home-links">
+      <a href="overview.html">Docs</a>
+      <a href="playground.html">Playground</a>
+      <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+    </div>
+  </nav>
 
-<div class="docs-layout">
-
-<!-- ── sidebar ── -->
-<nav class="sidebar" id="sidebar">
-  <div class="sidebar-group">
-    <div class="sidebar-title">Overview</div>
-    <a href="#what-is-dslx">Introduction</a>
-    <a href="#quick-start">Quick start</a>
-    <a href="#how-it-works">How it works</a>
-    <a href="#syntax">Syntax</a>
-  </div>
-  <div class="sidebar-group">
-    <div class="sidebar-title">Modules</div>
-    <a href="parser.html">parser</a>
-    <a href="runtime.html">runtime</a>
-    <a href="compile.html">compile</a>
-    <a href="import.html">import</a>
-  </div>
-  <div class="sidebar-group">
-    <div class="sidebar-title">More</div>
-    <a href="#is-element">is_element</a>
-    <a href="playground.html">→ Playground</a>
-  </div>
-</nav>
-
-<!-- ── content ── -->
-<main class="docs-content">
-
-<!-- hero -->
-<section class="hero" id="what-is-dslx">
-  <div class="hero-meta">
+  <div class="hero-content">
+    <img class="hero-logo" src="assets/DSLX_icon.png" alt="DSLX logo"/>
     <h1>DSLX</h1>
-    <span class="version-badge">v2.2-1</span>
+    <p class="hero-sub">Davi System: Lua XML</p>
+    <p class="hero-tagline">XML tags that quietly become Lua function calls.</p>
+
+    <a class="btn-docs" href="overview.html">Read the documentation →</a>
+
+    <div class="install">
+      <span class="install-prompt">$</span>
+      <code id="installCmd">luarocks install daviluaxml</code>
+      <button class="copy" id="copyBtn" type="button" aria-label="Copy install command">copy</button>
+    </div>
+    <p class="install-note">Requires Lua 5.5 · LPeg is installed automatically · experimental</p>
   </div>
-  <p>A module that gives Lua the ability to write XML-like syntax that compiles to pure Lua — similar to JSX in JavaScript.</p>
-  <div class="hero-badges">
-    <img src="https://img.shields.io/luarocks/v/pessoa736/daviluaxml" alt="LuaRocks"/>
-    <img src="https://img.shields.io/badge/Lua-5.5-blue" alt="Lua 5.5"/>
-    <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"/>
-  </div>
-  <div class="hero-actions">
-    <a class="btn btn-primary" href="playground.html">Try it live</a>
-    <a class="btn btn-secondary" href="#quick-start">Quick start</a>
-    <a class="btn btn-secondary" href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
-  </div>
-  <div class="callout warn" style="margin-top:20px">
-    <p>⚠ Experimental project. APIs may change without notice.</p>
-  </div>
-</section>
 
-<!-- quick start -->
-<section id="quick-start">
-  <h2>Quick start</h2>
+  <a class="scroll-hint" href="#uses" aria-label="See ways to use DSLX">ways to use ↓</a>
+</header>
 
-  <h4>1. Install</h4>
-  <pre><code class="language-bash">luarocks install daviluaxml</code></pre>
-  <p style="font-size:.875rem;color:var(--muted)">Requires Lua 5.5 and <a href="http://www.inf.puc-rio.br/~roberto/lpeg/">LPeg</a> (installed automatically).</p>
-
-  <h4>2. Create a <code>.dslx</code> file</h4>
-  <pre><code class="language-lua">-- hello.dslx
-local function greet(el)
-    return "Hello, " .. el.props.name .. "!"
-end
-
-&lt;greet name="world"/&gt;</code></pre>
-
-  <h4>3. Run it via <code>require</code></h4>
-  <pre><code class="language-lua">-- main.lua
-package.path = package.path .. ";./?.dslx"
-local dslx = require("dslx")   -- installs the .dslx searcher automatically
-print(require("hello"))         -- Hello, world!</code></pre>
-
-  <p>Or compile directly without touching <code>require</code>:</p>
-  <pre><code class="language-lua">local compile = require("dslx.compile")
-compile({ input = "hello.dslx", run = true })</code></pre>
-
-  <p style="margin-top:16px">
-    <a href="playground.html" class="btn btn-secondary" style="font-size:13px">→ Try these examples in the playground</a>
+<!-- ── ways to use ── -->
+<main id="uses" class="uses">
+  <h2>Ways to use</h2>
+  <p class="uses-intro">
+    In a <code>.dslx</code> file, any Lua function can be called as a tag. The tag becomes a call
+    that receives one table: <code>{ name, props, childrens }</code>. Everything compiles to plain Lua
+    before it runs.
   </p>
-</section>
 
-<!-- how it works -->
-<section id="how-it-works">
-  <h2>How it works</h2>
-  <p>In a <code>.dslx</code> file, any function defined in the Lua environment can be called in XML format. The tag becomes a function call that receives a single table with the tag name, the props and the childrens:</p>
+  <section class="use">
+    <div class="use-text">
+      <span class="use-num">01</span>
+      <h3>Components with <code>require</code></h3>
+      <p>
+        Write components in a <code>.dslx</code> file and load it like any Lua module.
+        <code>require("dslx")</code> installs a searcher for <code>.dslx</code> files.
+        Nested tags run first, and what they return becomes the parent's <code>childrens</code>.
+      </p>
+    </div>
+    <div class="use-code">
+<pre><code><span class="c">-- list.dslx</span>
+<span class="k">local function</span> item(el)
+    <span class="k">return</span> <span class="s">"- "</span> .. table.concat(el.childrens)
+<span class="k">end</span>
 
-  <pre><code class="language-lua">-- code in dslx
-local function soma(element)
-    local soma = 0
-    for _, valor in ipairs(element.childrens) do
-        soma = soma + valor
-    end
-    return soma + element.props.t
-end
+<span class="k">local function</span> list(el)
+    <span class="k">return</span> el.props.title .. <span class="s">"\n"</span> .. table.concat(el.childrens, <span class="s">"\n"</span>)
+<span class="k">end</span>
 
-local pt = function(element) print(table.unpack(element.childrens)) end
+<span class="k">return</span> <span class="t">&lt;list</span> <span class="a">title</span>=<span class="s">"Groceries"</span><span class="t">&gt;</span>
+    <span class="t">&lt;item&gt;</span>milk<span class="t">&lt;/item&gt;</span>
+    <span class="t">&lt;item&gt;</span>{2 + 1} apples<span class="t">&lt;/item&gt;</span>
+<span class="t">&lt;/list&gt;</span></code></pre>
+<pre><code><span class="c">-- main.lua</span>
+package.path = package.path .. <span class="s">";./?.dslx"</span>
+<span class="k">require</span>(<span class="s">"dslx"</span>)
+print((<span class="k">require</span>(<span class="s">"list"</span>)))
+<span class="c">--&gt; Groceries</span>
+<span class="c">--&gt; - milk</span>
+<span class="c">--&gt; - 3 apples</span></code></pre>
+    </div>
+  </section>
 
-&lt;pt&gt;
-    &lt;soma t={9}&gt;
-        {1}{2}{3}
-    &lt;/soma&gt;
-&lt;/pt&gt;</code></pre>
+  <section class="use">
+    <div class="use-text">
+      <span class="use-num">02</span>
+      <h3>Compile ahead of time</h3>
+      <p>
+        Turn a <code>.dslx</code> file into a plain <code>.lua</code> file, so the code that ships
+        doesn't need DSLX at runtime.
+      </p>
+    </div>
+    <div class="use-code">
+<pre><code><span class="k">local</span> compile = <span class="k">require</span>(<span class="s">"dslx.compile"</span>)
 
-  <p>Becomes:</p>
+<span class="c">-- writes ./hello.lua</span>
+compile({ input = <span class="s">"hello.dslx"</span> })
 
-  <pre><code class="language-lua">-- generated Lua
-local function soma(element)
-    local soma = 0
-    for _, valor in ipairs(element.childrens) do
-        soma = soma + valor
-    end
-    return soma + element.props.t
-end
+<span class="c">-- or compile and run it right away</span>
+compile({ input = <span class="s">"hello.dslx"</span>, run = <span class="k">true</span> })</code></pre>
+    </div>
+  </section>
 
-local pt = function(element) print(table.unpack(element.childrens)) end
+  <section class="use">
+    <div class="use-text">
+      <span class="use-num">03</span>
+      <h3>Compile a string</h3>
+      <p>
+        Pass code instead of a file name and get the generated Lua back, to see exactly
+        what a tag turns into.
+      </p>
+    </div>
+    <div class="use-code">
+<pre><code><span class="k">local</span> compile = <span class="k">require</span>(<span class="s">"dslx.compile"</span>)
 
-pt{name="pt", props={}, childrens={soma{name="soma", props={t=9}, childrens={1, 2, 3}, node_type="full_element"}}, node_type="full_element"}</code></pre>
+<span class="k">local</span> code = compile({
+    input  = <span class="s">'&lt;print a="x"&gt;{1 + 1}&lt;/print&gt;'</span>,
+    asfile = <span class="k">false</span>,
+    tofile = <span class="k">false</span>,
+})
+print(code)
+<span class="c">--&gt; print{name="print", props={a="x"}, childrens={1 + 1}, node_type="full_element"}</span></code></pre>
+    </div>
+  </section>
 
-  <p>The pipeline:</p>
-  <div class="mermaid">
-flowchart LR
-    A([".dslx"]) -->|source code| B["parser\n(LPeg)"]
-    B -->|AST| C["runtime\nmake_new_code"]
-    C -->|pure Lua| D(["load & execute"])
+  <section class="use">
+    <div class="use-text">
+      <span class="use-num">04</span>
+      <h3>Parser and runtime</h3>
+      <p>
+        Go one level down: parse code into an AST, generate Lua from it, or register your own
+        handler for a node type to change what gets generated.
+      </p>
+    </div>
+    <div class="use-code">
+<pre><code><span class="k">local</span> dslx = <span class="k">require</span>(<span class="s">"dslx"</span>)
+
+<span class="k">local</span> ast = dslx.parser(<span class="s">"local x = 1\n&lt;box size={3}/&gt;"</span>)
+print(ast.node_type)                 <span class="c">--&gt; file</span>
+print(ast.children[2].node_type)     <span class="c">--&gt; element_self_close</span>
+
+print(dslx.runtime:make_new_code(ast.children))
+<span class="c">--&gt; local x = 1</span>
+<span class="c">--&gt; box{name="box", props={size=3}, childrens={}, ...}</span>
+
+dslx.runtime:SetHandler(<span class="s">"element_self_close"</span>, <span class="k">function</span>(node, handlers)
+    <span class="k">return</span> <span class="c">--[[ your own Lua code for this node ]]</span>
+<span class="k">end</span>)</code></pre>
+    </div>
+  </section>
+
+  <div class="uses-end">
+    <a class="btn-docs" href="overview.html">Full documentation →</a>
+    <a class="btn-ghost" href="playground.html">Try it in the playground</a>
   </div>
-</section>
-
-<!-- syntax -->
-<section id="syntax">
-  <h2>Syntax</h2>
-
-  <h3>Props</h3>
-  <p>Props accept strings, Lua expressions (in <code>{}</code>), and booleans (name only):</p>
-  <pre><code class="language-lua">&lt;card titulo="olá" largura={10} destaque&gt;...&lt;/card&gt;
-
--- inside the handler:
-el.props.titulo   -- "olá"   (string)
-el.props.largura  -- 10      (Lua expression)
-el.props.destaque -- true    (boolean — prop name only)</code></pre>
-
-  <h3>Childrens</h3>
-  <p>Children can be literal text, Lua expressions, or nested elements:</p>
-  <pre><code class="language-lua">&lt;card&gt;
-    texto {40 + 2}
-    &lt;card/&gt;
-&lt;/card&gt;
-
--- inside the handler:
-el.childrens[1]  -- "texto "  (literal text)
-el.childrens[2]  -- 42        (Lua expression)
-el.childrens[3]  -- table     (nested element, result of &lt;card/&gt;)</code></pre>
-
-  <div class="callout">
-    <p>A nested element runs <strong>before</strong> its parent (Lua evaluates table values before the constructor). If the nested element returns <code>nil</code>, the child simply doesn't exist in the childrens table.</p>
-  </div>
-
-  <h3>Self-closing vs full tag</h3>
-  <pre><code class="language-lua">-- self-closing
-local c = &lt;card titulo="hi"/&gt;
-
--- full
-local c = &lt;card titulo="hi"&gt;
-    some text
-&lt;/card&gt;</code></pre>
-
-  <h3>AST node fields</h3>
-  <table class="type-table">
-    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
-    <tr><td>name</td><td>string</td><td>Tag name</td></tr>
-    <tr><td>props</td><td>table</td><td>Key→value prop table</td></tr>
-    <tr><td>childrens</td><td>table</td><td>Sequential list of children (strings, values, or tables)</td></tr>
-    <tr><td>node_type</td><td>string</td><td><code>"full_element"</code> or <code>"element_self_close"</code></td></tr>
-    <tr><td>self_close</td><td>boolean?</td><td><code>true</code> for self-closing tags only</td></tr>
-  </table>
-</section>
-
-<!-- module overview -->
-<section id="modules">
-  <h2>Modules</h2>
-  <p>DSLX is split into focused modules. Each module can be required individually.</p>
-
-  <div class="module-grid">
-    <a class="module-card" href="parser.html">
-      <div class="module-card-name">dslx.parser</div>
-      <div class="module-card-desc">Parses DSLX source into an AST using LPeg. Extensible with custom patterns.</div>
-    </a>
-    <a class="module-card" href="runtime.html">
-      <div class="module-card-name">dslx.runtime</div>
-      <div class="module-card-desc">Generates Lua source from an AST and optionally executes it. Customizable handlers per node type.</div>
-    </a>
-    <a class="module-card" href="compile.html">
-      <div class="module-card-name">dslx.compile</div>
-      <div class="module-card-desc">High-level API: compiles a .dslx file or string to Lua, write to disk, or run inline.</div>
-    </a>
-    <a class="module-card" href="import.html">
-      <div class="module-card-name">dslx.import</div>
-      <div class="module-card-desc">Hooks into Lua's require() system so .dslx files are loaded transparently.</div>
-    </a>
-  </div>
-</section>
-
-<!-- is_element global -->
-<section id="is-element">
-  <h2>is_element</h2>
-
-  <div class="api-card">
-    <div class="api-sig"><span class="fn-name">is_element</span>(<span class="fn-arg">fn: function</span>) <span class="fn-ret">→ boolean, string?, number?</span></div>
-    <p class="api-desc">Global installed by <code>require("dslx")</code>. Validates whether a function is a valid DSLX element handler: it must accept exactly 1 parameter (the element table).</p>
-    <dl class="api-params">
-      <dt>Returns</dt>
-      <dd><code>true</code> — function is valid.</dd>
-      <dd><code>false, error_message, nparams</code> — function is invalid.</dd>
-    </dl>
-    <pre><code class="language-lua">local dslx = require("dslx")
-
-local function card(el) return el.props.title end
-local function bad()   return "no args" end
-
-print(is_element(card))  -- true
-print(is_element(bad))   -- false   "..."   0
-print(is_element(42))    -- false   "o elemento precisa ser uma função."</code></pre>
-  </div>
-</section>
-
-<!-- what DSLX is not -->
-<section id="not-dslx">
-  <h2>What DSLX is not</h2>
-  <ul>
-    <li><strong>Not HTML</strong> — HTML is a web language for pages. DSLX is Lua+XML, where XML is a rigid system-level structuring language, not a UI markup language.</li>
-    <li><strong>Not a Lua replacement</strong> — DSLX works alongside Lua. All <code>.dslx</code> code becomes pure Lua before execution; there's no separate runtime or VM.</li>
-    <li><strong>Not a template engine</strong> — DSLX doesn't generate strings or HTML output. The XML syntax maps directly to Lua function calls.</li>
-  </ul>
-</section>
-
-<!-- license -->
-<section id="license">
-  <h2>License</h2>
-  <p>MIT. Free to use, fork and modify — keeping the credits. <a href="https://github.com/pessoa736/DLuaXML/blob/main/LICENSE">View full license ↗</a></p>
-</section>
-
 </main>
-</div>
 
-<footer class="footer">
-  <span>DSLX · MIT License · <a href="https://github.com/pessoa736/DLuaXML">GitHub</a></span>
-  <span style="color:var(--muted)">Davi/Pessoa736 · 2026</span>
+<footer class="home-footer">
+  MIT · made by <a href="https://github.com/pessoa736">pessoa736</a>
 </footer>
 
 <script>
-// ── highlight.js ──
-hljs.highlightAll();
+/* ───────────────────────────────────────────────────────────────
+   Background: a dusk landscape in muted blues and violets.
+   Layers, back to front: sky gradient → stars → hazy moon →
+   three ridges of hills → drifting fog → slow, thin rain.
+   Hills use a seeded random so they look the same on every visit.
+   With prefers-reduced-motion, a single still frame is drawn.
+   ─────────────────────────────────────────────────────────────── */
+(() => {
+  const canvas = document.getElementById("sky");
+  const ctx = canvas.getContext("2d");
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// ── copy buttons ──
-document.querySelectorAll('pre').forEach(pre => {
-    const btn = document.createElement('button');
-    btn.className = 'copy-btn';
-    btn.textContent = 'copy';
-    btn.addEventListener('click', () => {
-        const code = pre.querySelector('code');
-        navigator.clipboard.writeText((code || pre).textContent.trim()).then(() => {
-            btn.textContent = 'copied!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
-        });
+  // small deterministic PRNG (mulberry32)
+  const rng = (seed) => () => {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+
+  let W, H, stars, ridges, drops;
+
+  function build() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const r = rng(736);
+    stars = Array.from({ length: Math.round(W * H / 9000) }, () => ({
+      x: r() * W, y: r() * H * 0.6, s: r() * 1.2 + 0.2, p: r() * Math.PI * 2,
+    }));
+
+    // each ridge: base height (fraction of H), roughness, colour
+    const specs = [
+      { base: 0.62, amp: 0.10, col: "#2b2a45" },
+      { base: 0.72, amp: 0.08, col: "#1e1f36" },
+      { base: 0.82, amp: 0.06, col: "#141527" },
+    ];
+    ridges = specs.map((s, i) => {
+      const rr = rng(100 + i), pts = [], step = 24;
+      let y = 0;
+      for (let x = -step; x <= W + step; x += step) {
+        y += (rr() - 0.5) * 0.35;           // random walk...
+        y *= 0.85;                          // ...pulled back toward 0
+        pts.push([x, H * (s.base + y * s.amp)]);
+      }
+      return { pts, col: s.col, base: s.base };
     });
-    pre.appendChild(btn);
-});
 
-// ── mobile menu ──
-const toggle = document.getElementById('navToggle');
-const menu   = document.getElementById('mobileMenu');
-toggle.addEventListener('click', () => menu.classList.toggle('open'));
-menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
-document.addEventListener('click', e => {
-    if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
-});
+    const rd = rng(9);
+    drops = Array.from({ length: Math.round(W / 9) }, () => ({
+      x: rd() * W, y: rd() * H, l: rd() * 14 + 8, v: rd() * 1.5 + 2.5,
+    }));
+  }
 
-// ── sidebar active link on scroll ──
-const sections = document.querySelectorAll('section[id]');
-const links    = document.querySelectorAll('.sidebar a[href^="#"]');
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
-}, { passive: true });
+  function draw(t) {
+    // sky: deep night at the top, faded rose at the horizon
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#0b0e1c");
+    g.addColorStop(0.45, "#232241");
+    g.addColorStop(0.75, "#4a3b58");
+    g.addColorStop(1, "#5c4660");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    // stars, slowly breathing
+    ctx.fillStyle = "#d9dcf0";
+    for (const s of stars) {
+      ctx.globalAlpha = 0.35 + 0.35 * Math.sin(s.p + t * 0.0006);
+      ctx.fillRect(s.x, s.y, s.s, s.s);
+    }
+    ctx.globalAlpha = 1;
+
+    // moon with a wide, cold halo (moved up and right on narrow screens so it doesn't touch the logo)
+    const narrow = W < 700;
+    const mx = W * (narrow ? 0.82 : 0.74), my = H * (narrow ? 0.14 : 0.26);
+    const mr = Math.min(W, H) * (narrow ? 0.05 : 0.06);
+    const halo = ctx.createRadialGradient(mx, my, mr * 0.5, mx, my, mr * 6);
+    halo.addColorStop(0, "rgba(200,205,235,0.22)");
+    halo.addColorStop(1, "rgba(200,205,235,0)");
+    ctx.fillStyle = halo; ctx.fillRect(0, 0, W, H);
+    const disk = ctx.createRadialGradient(mx - mr * 0.3, my - mr * 0.3, mr * 0.1, mx, my, mr);
+    disk.addColorStop(0, "#e3e4f1");
+    disk.addColorStop(1, "#b9bbd3");
+    ctx.fillStyle = disk;
+    ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
+
+    // hills, each ridge followed by a band of fog that drifts up and down
+    ridges.forEach((rg, i) => {
+      ctx.fillStyle = rg.col;
+      ctx.beginPath(); ctx.moveTo(0, H);
+      for (const [x, y] of rg.pts) ctx.lineTo(x, y);
+      ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+
+      const fy = H * rg.base + Math.sin(t * 0.0002 + i) * 6;
+      const fog = ctx.createLinearGradient(0, fy - 50, 0, fy + 50);
+      fog.addColorStop(0, "rgba(120,115,150,0)");
+      fog.addColorStop(0.5, "rgba(120,115,150,0.12)");
+      fog.addColorStop(1, "rgba(120,115,150,0)");
+      ctx.fillStyle = fog; ctx.fillRect(0, fy - 50, W, 100);
+    });
+
+    // thin rain, slightly slanted
+    ctx.strokeStyle = "rgba(180,185,215,0.16)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (const d of drops) {
+      ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - d.l * 0.2, d.y + d.l);
+      if (!still) {
+        d.y += d.v; d.x -= d.v * 0.2;
+        if (d.y > H) { d.y = -d.l; d.x = Math.random() * (W + 40); }
+      }
+    }
+    ctx.stroke();
+
+    if (!still) requestAnimationFrame(draw);
+  }
+
+  build();
+  window.addEventListener("resize", () => { build(); if (still) draw(0); });
+  still ? draw(0) : requestAnimationFrame(draw);
+})();
+
+// copy the install command
+document.getElementById("copyBtn").addEventListener("click", async (e) => {
+  const cmd = document.getElementById("installCmd").textContent;
+  try { await navigator.clipboard.writeText(cmd); e.target.textContent = "copied"; }
+  catch { e.target.textContent = "select & copy"; }
+  setTimeout(() => (e.target.textContent = "copy"), 1600);
+});
 </script>
 </body>
 </html>
