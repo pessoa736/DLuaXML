@@ -3,63 +3,56 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DSLX — Davi System: Lua XML</title>
-<meta name="description" content="DSLX: a JSX-like syntax for Lua. Write XML tags that become Lua function calls."/>
+<title>DSLX: XML tags for Lua</title>
+<meta name="description" content="DSLX lets you call Lua functions as XML tags. Files compile to plain Lua before they run."/>
 <link rel="icon" type="image/png" href="assets/DSLX_icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"/>
 <link rel="stylesheet" href="assets/home.css"/>
 </head>
 <body>
 
-<!-- ── hero: animated melancholic landscape behind the title ── -->
+<!-- Hero. "Lua" is Portuguese for moon: the background is a moon over still water,
+     its reflection broken into lines. That reflection is the page's only motion. -->
 <header class="hero">
-  <canvas id="sky" aria-hidden="true"></canvas>
+  <canvas id="sea" aria-hidden="true"></canvas>
 
-  <nav class="home-nav">
-    <a class="home-brand" href="index.html"><img src="assets/DSLX_icon.png" alt=""/>DSLX</a>
-    <div class="home-links">
-      <a href="overview.html">Docs</a>
+  <nav class="topbar" aria-label="Main">
+    <a class="brand" href="index.html"><img src="assets/DSLX_icon.png" alt=""/>DSLX</a>
+    <div class="topbar-links">
+      <a href="overview.html">Documentation</a>
       <a href="playground.html">Playground</a>
-      <a href="https://github.com/pessoa736/DLuaXML">GitHub ↗</a>
+      <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
     </div>
   </nav>
 
-  <div class="hero-content">
-    <img class="hero-logo" src="assets/DSLX_icon.png" alt="DSLX logo"/>
+  <div class="hero-text">
     <h1>DSLX</h1>
-    <p class="hero-sub">Davi System: Lua XML</p>
-    <p class="hero-tagline">XML tags that quietly become Lua function calls.</p>
+    <p class="expansion">Davi System: Lua XML</p>
+    <p class="lede">Write Lua functions as XML tags. Every <code>.dslx</code> file becomes plain Lua before it runs.</p>
 
-    <a class="btn-docs" href="overview.html">Read the documentation →</a>
+    <a class="button" href="overview.html">Read the documentation</a>
 
     <div class="install">
-      <span class="install-prompt">$</span>
       <code id="installCmd">luarocks install daviluaxml</code>
-      <button class="copy" id="copyBtn" type="button" aria-label="Copy install command">copy</button>
+      <button class="copy" id="copyBtn" type="button">Copy</button>
     </div>
-    <p class="install-note">Requires Lua 5.5 · LPeg is installed automatically · experimental</p>
+    <p class="install-note">Needs Lua 5.5. The project is experimental, so the API can still change.</p>
   </div>
-
-  <a class="scroll-hint" href="#uses" aria-label="See ways to use DSLX">ways to use ↓</a>
 </header>
 
-<!-- ── ways to use ── -->
-<main id="uses" class="uses">
-  <h2>Ways to use</h2>
-  <p class="uses-intro">
-    In a <code>.dslx</code> file, any Lua function can be called as a tag. The tag becomes a call
-    that receives one table: <code>{ name, props, childrens }</code>. Everything compiles to plain Lua
-    before it runs.
-  </p>
+<!-- Ways to use. Four independent entry points, so no numbering. -->
+<main class="uses" id="uses">
+  <div class="uses-head">
+    <h2>Ways to use it</h2>
+    <p>A tag is a function call. <code>&lt;item&gt;milk&lt;/item&gt;</code> calls <code>item</code> with one table: its <code>name</code>, its <code>props</code> and its <code>childrens</code>.</p>
+  </div>
 
   <section class="use">
     <div class="use-text">
-      <span class="use-num">01</span>
-      <h3>Components with <code>require</code></h3>
-      <p>
-        Write components in a <code>.dslx</code> file and load it like any Lua module.
-        <code>require("dslx")</code> installs a searcher for <code>.dslx</code> files.
-        Nested tags run first, and what they return becomes the parent's <code>childrens</code>.
-      </p>
+      <h3>Write components and require them</h3>
+      <p>Load a <code>.dslx</code> file like any Lua module. Inner tags run first, and what they return becomes the outer tag's <code>childrens</code>.</p>
     </div>
     <div class="use-code">
 <pre><code><span class="c">-- list.dslx</span>
@@ -87,12 +80,8 @@ print((<span class="k">require</span>(<span class="s">"list"</span>)))
 
   <section class="use">
     <div class="use-text">
-      <span class="use-num">02</span>
-      <h3>Compile ahead of time</h3>
-      <p>
-        Turn a <code>.dslx</code> file into a plain <code>.lua</code> file, so the code that ships
-        doesn't need DSLX at runtime.
-      </p>
+      <h3>Compile to plain Lua</h3>
+      <p>Turn a <code>.dslx</code> file into a <code>.lua</code> file ahead of time, so what you ship doesn't need DSLX at all.</p>
     </div>
     <div class="use-code">
 <pre><code><span class="k">local</span> compile = <span class="k">require</span>(<span class="s">"dslx.compile"</span>)
@@ -100,199 +89,192 @@ print((<span class="k">require</span>(<span class="s">"list"</span>)))
 <span class="c">-- writes ./hello.lua</span>
 compile({ input = <span class="s">"hello.dslx"</span> })
 
-<span class="c">-- or compile and run it right away</span>
+<span class="c">-- or compile and run it in one go</span>
 compile({ input = <span class="s">"hello.dslx"</span>, run = <span class="k">true</span> })</code></pre>
     </div>
   </section>
 
   <section class="use">
     <div class="use-text">
-      <span class="use-num">03</span>
-      <h3>Compile a string</h3>
-      <p>
-        Pass code instead of a file name and get the generated Lua back, to see exactly
-        what a tag turns into.
-      </p>
+      <h3>See what a tag becomes</h3>
+      <p>Compile a string instead of a file and get the generated Lua back.</p>
     </div>
     <div class="use-code">
 <pre><code><span class="k">local</span> compile = <span class="k">require</span>(<span class="s">"dslx.compile"</span>)
 
-<span class="k">local</span> code = compile({
+print(compile({
     input  = <span class="s">'&lt;print a="x"&gt;{1 + 1}&lt;/print&gt;'</span>,
     asfile = <span class="k">false</span>,
     tofile = <span class="k">false</span>,
-})
-print(code)
+}))
 <span class="c">--&gt; print{name="print", props={a="x"}, childrens={1 + 1}, node_type="full_element"}</span></code></pre>
     </div>
   </section>
 
   <section class="use">
     <div class="use-text">
-      <span class="use-num">04</span>
-      <h3>Parser and runtime</h3>
-      <p>
-        Go one level down: parse code into an AST, generate Lua from it, or register your own
-        handler for a node type to change what gets generated.
-      </p>
+      <h3>Change how code is generated</h3>
+      <p>Parse code into a tree, generate Lua from it, or register your own handler for a kind of node.</p>
     </div>
     <div class="use-code">
 <pre><code><span class="k">local</span> dslx = <span class="k">require</span>(<span class="s">"dslx"</span>)
 
 <span class="k">local</span> ast = dslx.parser(<span class="s">"local x = 1\n&lt;box size={3}/&gt;"</span>)
-print(ast.node_type)                 <span class="c">--&gt; file</span>
-print(ast.children[2].node_type)     <span class="c">--&gt; element_self_close</span>
+print(ast.children[2].node_type)   <span class="c">--&gt; element_self_close</span>
 
 print(dslx.runtime:make_new_code(ast.children))
 <span class="c">--&gt; local x = 1</span>
 <span class="c">--&gt; box{name="box", props={size=3}, childrens={}, ...}</span>
 
 dslx.runtime:SetHandler(<span class="s">"element_self_close"</span>, <span class="k">function</span>(node, handlers)
-    <span class="k">return</span> <span class="c">--[[ your own Lua code for this node ]]</span>
+    <span class="k">return</span> <span class="c">--[[ the Lua code you want for this node ]]</span>
 <span class="k">end</span>)</code></pre>
     </div>
   </section>
 
-  <div class="uses-end">
-    <a class="btn-docs" href="overview.html">Full documentation →</a>
-    <a class="btn-ghost" href="playground.html">Try it in the playground</a>
+  <div class="uses-foot">
+    <p>Every option of these modules is in the documentation, and the playground compiles DSLX in your browser.</p>
+    <div class="uses-foot-links">
+      <a class="button" href="overview.html">Read the documentation</a>
+      <a class="button button-quiet" href="playground.html">Open the playground</a>
+    </div>
   </div>
 </main>
 
-<footer class="home-footer">
-  MIT · made by <a href="https://github.com/pessoa736">pessoa736</a>
+<footer class="footer">
+  <p>MIT license. Made by <a href="https://github.com/pessoa736">pessoa736</a>.</p>
 </footer>
 
 <script>
-/* ───────────────────────────────────────────────────────────────
-   Background: a dusk landscape in muted blues and violets.
-   Layers, back to front: sky gradient → stars → hazy moon →
-   three ridges of hills → drifting fog → slow, thin rain.
-   Hills use a seeded random so they look the same on every visit.
-   With prefers-reduced-motion, a single still frame is drawn.
-   ─────────────────────────────────────────────────────────────── */
+/* The sea. Drawn once per frame, back to front:
+   night sky → moon and its glow → horizon haze → dark water → the reflection.
+   Only the reflection moves: each line slowly changes its width, like light on a calm swell.
+   With prefers-reduced-motion it is drawn once and stays still. */
 (() => {
-  const canvas = document.getElementById("sky");
+  const canvas = document.getElementById("sea");
   const ctx = canvas.getContext("2d");
-  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // small deterministic PRNG (mulberry32)
-  const rng = (seed) => () => {
-    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
+  const SKY_TOP = "#0b161d", SKY_LOW = "#1c3a44";
+  const WATER_TOP = "#11252d", WATER_LOW = "#081116";
+  const MOON = "#e6e1cf";
 
-  let W, H, stars, ridges, drops;
+  let W, H, horizon, moon, lines, narrow;
 
-  function build() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  function layout() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
     W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const r = rng(736);
-    stars = Array.from({ length: Math.round(W * H / 9000) }, () => ({
-      x: r() * W, y: r() * H * 0.6, s: r() * 1.2 + 0.2, p: r() * Math.PI * 2,
-    }));
+    // the horizon sits below the text on wide screens, and high up on phones,
+    // where the text has to go under it; there the reflection is dimmed
+    narrow = W < 760;
+    horizon = H * (narrow ? 0.30 : 0.66);
+    moon = {
+      x: W * (narrow ? 0.80 : 0.72),
+      y: horizon * (narrow ? 0.45 : 0.40),
+      r: Math.min(W, H) * (narrow ? 0.065 : 0.075),
+    };
 
-    // each ridge: base height (fraction of H), roughness, colour
-    const specs = [
-      { base: 0.62, amp: 0.10, col: "#2b2a45" },
-      { base: 0.72, amp: 0.08, col: "#1e1f36" },
-      { base: 0.82, amp: 0.06, col: "#141527" },
-    ];
-    ridges = specs.map((s, i) => {
-      const rr = rng(100 + i), pts = [], step = 24;
-      let y = 0;
-      for (let x = -step; x <= W + step; x += step) {
-        y += (rr() - 0.5) * 0.35;           // random walk...
-        y *= 0.85;                          // ...pulled back toward 0
-        pts.push([x, H * (s.base + y * s.amp)]);
-      }
-      return { pts, col: s.col, base: s.base };
-    });
-
-    const rd = rng(9);
-    drops = Array.from({ length: Math.round(W / 9) }, () => ({
-      x: rd() * W, y: rd() * H, l: rd() * 14 + 8, v: rd() * 1.5 + 2.5,
-    }));
+    // one reflection line every few pixels below the horizon; each has its own phase
+    lines = [];
+    for (let y = horizon + 4; y < H; y += 5 + (y - horizon) * 0.02) {
+      lines.push({
+        y,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.3 + Math.random() * 0.5,
+        cuts: 1 + Math.floor(Math.random() * 3),   // how many pieces the line breaks into
+      });
+    }
   }
 
-  function draw(t) {
-    // sky: deep night at the top, faded rose at the horizon
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#0b0e1c");
-    g.addColorStop(0.45, "#232241");
-    g.addColorStop(0.75, "#4a3b58");
-    g.addColorStop(1, "#5c4660");
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  function frame(time) {
+    const t = time / 1000;
 
-    // stars, slowly breathing
-    ctx.fillStyle = "#d9dcf0";
-    for (const s of stars) {
-      ctx.globalAlpha = 0.35 + 0.35 * Math.sin(s.p + t * 0.0006);
-      ctx.fillRect(s.x, s.y, s.s, s.s);
+    // sky
+    let g = ctx.createLinearGradient(0, 0, 0, horizon);
+    g.addColorStop(0, SKY_TOP);
+    g.addColorStop(1, SKY_LOW);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, horizon);
+
+    // moon glow, then the disk
+    g = ctx.createRadialGradient(moon.x, moon.y, moon.r, moon.x, moon.y, moon.r * 7);
+    g.addColorStop(0, "rgba(230,225,207,0.16)");
+    g.addColorStop(1, "rgba(230,225,207,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, horizon);
+
+    ctx.fillStyle = MOON;
+    ctx.beginPath(); ctx.arc(moon.x, moon.y, moon.r, 0, Math.PI * 2); ctx.fill();
+
+    // a soft band of haze sitting on the horizon
+    g = ctx.createLinearGradient(0, horizon - 60, 0, horizon);
+    g.addColorStop(0, "rgba(147,167,170,0)");
+    g.addColorStop(1, "rgba(147,167,170,0.10)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, horizon - 60, W, 60);
+
+    // water
+    g = ctx.createLinearGradient(0, horizon, 0, H);
+    g.addColorStop(0, WATER_TOP);
+    g.addColorStop(1, WATER_LOW);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, horizon, W, H - horizon);
+
+    // on wide screens, the left side (where the text is) falls into shadow,
+    // so the horizon fades out before it reaches the words
+    if (!narrow) {
+      g = ctx.createLinearGradient(0, 0, W * 0.55, 0);
+      g.addColorStop(0, "rgba(8,17,22,0.88)");
+      g.addColorStop(0.55, "rgba(8,17,22,0.55)");
+      g.addColorStop(1, "rgba(8,17,22,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W * 0.55, H);
+    }
+
+    // reflection: horizontal lines under the moon, broken into pieces,
+    // widening and fading with depth. Each piece grows and shrinks on its own swell.
+    const reach = narrow ? 0.45 : 1;          // on phones it fades out sooner
+    const strength = narrow ? 0.30 : 0.55;
+    ctx.fillStyle = MOON;
+    for (const l of lines) {
+      const depth = (l.y - horizon) / (H - horizon);       // 0 at the horizon, 1 at the bottom
+      const fade = Math.max(0, 1 - depth / reach);
+      if (fade === 0) continue;
+      const half = moon.r * (0.7 + depth * 2.2);
+      const drift = Math.sin(l.phase * 3 + t * 0.25) * moon.r * 0.3 * depth;
+      const piece = (half * 2) / l.cuts;
+      for (let k = 0; k < l.cuts; k++) {
+        const swell = Math.sin(l.phase + k * 2.1 + t * l.speed) * 0.5 + 0.5;
+        const len = piece * (0.25 + swell * 0.7);
+        const x = moon.x - half + drift + k * piece + (piece - len) / 2;
+        ctx.globalAlpha = fade * strength * (0.35 + swell * 0.65);
+        ctx.fillRect(x, l.y, len, 1.3);
+      }
     }
     ctx.globalAlpha = 1;
 
-    // moon with a wide, cold halo (moved up and right on narrow screens so it doesn't touch the logo)
-    const narrow = W < 700;
-    const mx = W * (narrow ? 0.82 : 0.74), my = H * (narrow ? 0.14 : 0.26);
-    const mr = Math.min(W, H) * (narrow ? 0.05 : 0.06);
-    const halo = ctx.createRadialGradient(mx, my, mr * 0.5, mx, my, mr * 6);
-    halo.addColorStop(0, "rgba(200,205,235,0.22)");
-    halo.addColorStop(1, "rgba(200,205,235,0)");
-    ctx.fillStyle = halo; ctx.fillRect(0, 0, W, H);
-    const disk = ctx.createRadialGradient(mx - mr * 0.3, my - mr * 0.3, mr * 0.1, mx, my, mr);
-    disk.addColorStop(0, "#e3e4f1");
-    disk.addColorStop(1, "#b9bbd3");
-    ctx.fillStyle = disk;
-    ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
-
-    // hills, each ridge followed by a band of fog that drifts up and down
-    ridges.forEach((rg, i) => {
-      ctx.fillStyle = rg.col;
-      ctx.beginPath(); ctx.moveTo(0, H);
-      for (const [x, y] of rg.pts) ctx.lineTo(x, y);
-      ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
-
-      const fy = H * rg.base + Math.sin(t * 0.0002 + i) * 6;
-      const fog = ctx.createLinearGradient(0, fy - 50, 0, fy + 50);
-      fog.addColorStop(0, "rgba(120,115,150,0)");
-      fog.addColorStop(0.5, "rgba(120,115,150,0.12)");
-      fog.addColorStop(1, "rgba(120,115,150,0)");
-      ctx.fillStyle = fog; ctx.fillRect(0, fy - 50, W, 100);
-    });
-
-    // thin rain, slightly slanted
-    ctx.strokeStyle = "rgba(180,185,215,0.16)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (const d of drops) {
-      ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - d.l * 0.2, d.y + d.l);
-      if (!still) {
-        d.y += d.v; d.x -= d.v * 0.2;
-        if (d.y > H) { d.y = -d.l; d.x = Math.random() * (W + 40); }
-      }
-    }
-    ctx.stroke();
-
-    if (!still) requestAnimationFrame(draw);
+    if (!still) requestAnimationFrame(frame);
   }
 
-  build();
-  window.addEventListener("resize", () => { build(); if (still) draw(0); });
-  still ? draw(0) : requestAnimationFrame(draw);
+  layout();
+  addEventListener("resize", () => { layout(); if (still) frame(0); });
+  still ? frame(0) : requestAnimationFrame(frame);
 })();
 
-// copy the install command
-document.getElementById("copyBtn").addEventListener("click", async (e) => {
-  const cmd = document.getElementById("installCmd").textContent;
-  try { await navigator.clipboard.writeText(cmd); e.target.textContent = "copied"; }
-  catch { e.target.textContent = "select & copy"; }
-  setTimeout(() => (e.target.textContent = "copy"), 1600);
+// Copy the install command; the button says what happened.
+document.getElementById("copyBtn").addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  const command = document.getElementById("installCmd").textContent;
+  try {
+    await navigator.clipboard.writeText(command);
+    button.textContent = "Copied";
+  } catch {
+    button.textContent = "Select it to copy";
+  }
+  setTimeout(() => (button.textContent = "Copy"), 1800);
 });
 </script>
 </body>
