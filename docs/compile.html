@@ -18,71 +18,57 @@
 </head>
 <body>
 
-<!-- ── nav ── -->
-<nav class="nav">
-  <a class="nav-logo" href="index.html"><img src="assets/dslx-mark.svg" alt=""/>DSLX <span>docs</span></a>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<nav class="nav" aria-label="Site">
+  <a class="nav-logo" href="index.html"><img src="assets/dslx-mark.svg" alt=""/>DSLX</a>
   <span class="nav-version">v2.2-1</span>
   <div class="nav-links">
-    <a href="overview.html">Overview</a>
+    <a href="overview.html" class="active" aria-current="page">Docs</a>
     <a href="playground.html">Playground</a>
     <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
 </nav>
 
-<!-- mobile menu -->
 <div class="mobile-menu" id="mobileMenu">
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">Navigation</div>
+<nav aria-label="Documentation">
+  <div class="sidebar-group">
+    <p class="sidebar-title">Start here</p>
     <a href="overview.html">Overview</a>
     <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">compile</div>
-    <a href="#intro">Introduction</a>
-    <a href="#compile-call">compile(config)</a>
-    <a href="#config-fields">Config fields</a>
-    <a href="#examples">Examples</a>
+  <div class="sidebar-group">
+    <p class="sidebar-title">Modules</p>
+    <a href="parser.html"><code>parser</code></a>
+    <a href="runtime.html"><code>runtime</code></a>
+    <a href="compile.html" class="active" aria-current="page"><code>compile</code></a>
+    <a href="import.html"><code>import</code></a>
   </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">More</div>
-    <a href="overview.html#is-element">is_element</a>
-    <a href="playground.html">Playground</a>
+  <div class="sidebar-group">
+    <a href="https://github.com/pessoa736/DLuaXML">Source on GitHub</a>
   </div>
+</nav>
 </div>
 
 <div class="docs-layout">
 
-<!-- ── sidebar ── -->
-<nav class="sidebar" id="sidebar">
+<nav class="sidebar" aria-label="Documentation">
   <div class="sidebar-group">
-    <div class="sidebar-title">Overview</div>
-    <a href="overview.html">Introduction</a>
-    <a href="overview.html#quick-start">Quick start</a>
-    <a href="overview.html#how-it-works">How it works</a>
-    <a href="overview.html#syntax">Syntax</a>
-  </div>
-  <div class="sidebar-group">
-    <div class="sidebar-title">Modules</div>
-    <a href="parser.html">parser</a>
-    <a href="runtime.html">runtime</a>
-    <a href="compile.html" class="active">compile</a>
-    <a href="#intro" class="sub">Introduction</a>
-    <a href="#compile-call" class="sub">compile(config)</a>
-    <a href="#config-fields" class="sub">Config fields</a>
-    <a href="#examples" class="sub">Examples</a>
-    <a href="import.html">import</a>
-  </div>
-  <div class="sidebar-group">
-    <div class="sidebar-title">More</div>
-    <a href="overview.html#is-element">is_element</a>
+    <p class="sidebar-title">Start here</p>
+    <a href="overview.html">Overview</a>
     <a href="playground.html">Playground</a>
+  </div>
+  <div class="sidebar-group">
+    <p class="sidebar-title">Modules</p>
+    <a href="parser.html"><code>parser</code></a>
+    <a href="runtime.html"><code>runtime</code></a>
+    <a href="compile.html" class="active" aria-current="page"><code>compile</code></a>
+    <a href="import.html"><code>import</code></a>
   </div>
 </nav>
 
-<!-- ── content ── -->
-<main class="docs-content">
+<main class="docs-content" id="content">
 
 <section id="intro">
   <div class="hero-meta" style="margin-bottom:8px">
@@ -146,7 +132,14 @@ compile({
 compile({ input = "hello.dslx", tofile = false, run = true })</code></pre>
 </section>
 
+<nav class="pager" aria-label="Previous and next page">
+  <a class="pager-prev" href="runtime.html"><span>Previous</span><code>runtime</code></a>
+  <a class="pager-next" href="import.html"><span>Next</span><code>import</code></a>
+</nav>
+
 </main>
+
+<aside class="toc" aria-label="On this page"></aside>
 </div>
 
 <footer class="footer">
@@ -155,43 +148,6 @@ compile({ input = "hello.dslx", tofile = false, run = true })</code></pre>
   <small class="credit">The DSLX library code was written by Davi. This website and its documentation were made with <a href="https://hermes-agent.nousresearch.com">Hermes</a>, an AI agent.</small>
 </footer>
 
-<script>
-// ── highlight.js ──
-hljs.highlightAll();
-
-// ── copy buttons ──
-document.querySelectorAll('pre').forEach(pre => {
-    const btn = document.createElement('button');
-    btn.className = 'copy-btn';
-    btn.textContent = 'copy';
-    btn.addEventListener('click', () => {
-        const code = pre.querySelector('code');
-        navigator.clipboard.writeText((code || pre).textContent.trim()).then(() => {
-            btn.textContent = 'copied!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
-        });
-    });
-    pre.appendChild(btn);
-});
-
-// ── mobile menu ──
-const toggle = document.getElementById('navToggle');
-const menu   = document.getElementById('mobileMenu');
-toggle.addEventListener('click', () => menu.classList.toggle('open'));
-menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
-document.addEventListener('click', e => {
-    if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
-});
-
-// ── sidebar active link on scroll ──
-const sections = document.querySelectorAll('section[id]');
-const links    = document.querySelectorAll('.sidebar a[href^="#"]');
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
-}, { passive: true });
-</script>
+<script src="assets/docs.js"></script>
 </body>
 </html>

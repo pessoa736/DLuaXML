@@ -26,74 +26,57 @@
 </head>
 <body>
 
-<!-- ── nav ── -->
-<nav class="nav">
-  <a class="nav-logo" href="index.html"><img src="assets/dslx-mark.svg" alt=""/>DSLX <span>docs</span></a>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<nav class="nav" aria-label="Site">
+  <a class="nav-logo" href="index.html"><img src="assets/dslx-mark.svg" alt=""/>DSLX</a>
   <span class="nav-version">v2.2-1</span>
   <div class="nav-links">
-    <a href="overview.html" class="active">Overview</a>
+    <a href="overview.html" class="active" aria-current="page">Docs</a>
     <a href="playground.html">Playground</a>
     <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
   </div>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
 </nav>
 
-<!-- mobile menu -->
 <div class="mobile-menu" id="mobileMenu">
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">Navigation</div>
-    <a href="overview.html">Overview</a>
-    <a href="playground.html">Playground</a>
-    <a href="https://github.com/pessoa736/DLuaXML">GitHub</a>
-  </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">Overview</div>
-    <a href="#what-is-dslx">Introduction</a>
-    <a href="#quick-start">Quick start</a>
-    <a href="#how-it-works">How it works</a>
-    <a href="#syntax">Syntax</a>
-  </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">Modules</div>
-    <a href="parser.html">parser</a>
-    <a href="runtime.html">runtime</a>
-    <a href="compile.html">compile</a>
-    <a href="import.html">import</a>
-  </div>
-  <div class="mobile-menu-group">
-    <div class="mobile-menu-title">More</div>
-    <a href="#is-element">is_element</a>
+<nav aria-label="Documentation">
+  <div class="sidebar-group">
+    <p class="sidebar-title">Start here</p>
+    <a href="overview.html" class="active" aria-current="page">Overview</a>
     <a href="playground.html">Playground</a>
   </div>
+  <div class="sidebar-group">
+    <p class="sidebar-title">Modules</p>
+    <a href="parser.html"><code>parser</code></a>
+    <a href="runtime.html"><code>runtime</code></a>
+    <a href="compile.html"><code>compile</code></a>
+    <a href="import.html"><code>import</code></a>
+  </div>
+  <div class="sidebar-group">
+    <a href="https://github.com/pessoa736/DLuaXML">Source on GitHub</a>
+  </div>
+</nav>
 </div>
 
 <div class="docs-layout">
 
-<!-- ── sidebar ── -->
-<nav class="sidebar" id="sidebar">
+<nav class="sidebar" aria-label="Documentation">
   <div class="sidebar-group">
-    <div class="sidebar-title">Overview</div>
-    <a href="#what-is-dslx">Introduction</a>
-    <a href="#quick-start">Quick start</a>
-    <a href="#how-it-works">How it works</a>
-    <a href="#syntax">Syntax</a>
-  </div>
-  <div class="sidebar-group">
-    <div class="sidebar-title">Modules</div>
-    <a href="parser.html">parser</a>
-    <a href="runtime.html">runtime</a>
-    <a href="compile.html">compile</a>
-    <a href="import.html">import</a>
-  </div>
-  <div class="sidebar-group">
-    <div class="sidebar-title">More</div>
-    <a href="#is-element">is_element</a>
+    <p class="sidebar-title">Start here</p>
+    <a href="overview.html" class="active" aria-current="page">Overview</a>
     <a href="playground.html">Playground</a>
+  </div>
+  <div class="sidebar-group">
+    <p class="sidebar-title">Modules</p>
+    <a href="parser.html"><code>parser</code></a>
+    <a href="runtime.html"><code>runtime</code></a>
+    <a href="compile.html"><code>compile</code></a>
+    <a href="import.html"><code>import</code></a>
   </div>
 </nav>
 
-<!-- ── content ── -->
-<main class="docs-content">
+<main class="docs-content" id="content">
 
 <!-- hero -->
 <section class="hero" id="what-is-dslx">
@@ -108,12 +91,11 @@
     <img src="https://img.shields.io/badge/license-MIT-17303a?labelColor=0a141a" alt="MIT"/>
   </div>
   <div class="hero-actions">
-    <a class="btn btn-primary" href="playground.html">Try it live</a>
-    <a class="btn btn-secondary" href="#quick-start">Quick start</a>
-    <a class="btn btn-secondary" href="https://github.com/pessoa736/DLuaXML">GitHub</a>
+    <a class="btn btn-primary" href="#quick-start">Start with the quick start</a>
+    <a class="btn btn-secondary" href="playground.html">Try it in the playground</a>
   </div>
-  <div class="callout warn" style="margin-top:20px">
-    <p>⚠ Experimental project. APIs may change without notice.</p>
+  <div class="callout warn">
+    <p><strong>Experimental.</strong> APIs may change without notice.</p>
   </div>
 </section>
 
@@ -307,7 +289,14 @@ print(is_element(42))    -- false   "o elemento precisa ser uma função."</code
   <p>MIT. Free to use, fork and modify — keeping the credits. <a href="https://github.com/pessoa736/DLuaXML/blob/main/LICENSE">Read the full license</a></p>
 </section>
 
+<nav class="pager" aria-label="Previous and next page">
+  <span></span>
+  <a class="pager-next" href="parser.html"><span>Next</span><code>parser</code></a>
+</nav>
+
 </main>
+
+<aside class="toc" aria-label="On this page"></aside>
 </div>
 
 <footer class="footer">
@@ -316,43 +305,6 @@ print(is_element(42))    -- false   "o elemento precisa ser uma função."</code
   <small class="credit">The DSLX library code was written by Davi. This website and its documentation were made with <a href="https://hermes-agent.nousresearch.com">Hermes</a>, an AI agent.</small>
 </footer>
 
-<script>
-// ── highlight.js ──
-hljs.highlightAll();
-
-// ── copy buttons ──
-document.querySelectorAll('pre').forEach(pre => {
-    const btn = document.createElement('button');
-    btn.className = 'copy-btn';
-    btn.textContent = 'copy';
-    btn.addEventListener('click', () => {
-        const code = pre.querySelector('code');
-        navigator.clipboard.writeText((code || pre).textContent.trim()).then(() => {
-            btn.textContent = 'copied!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
-        });
-    });
-    pre.appendChild(btn);
-});
-
-// ── mobile menu ──
-const toggle = document.getElementById('navToggle');
-const menu   = document.getElementById('mobileMenu');
-toggle.addEventListener('click', () => menu.classList.toggle('open'));
-menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
-document.addEventListener('click', e => {
-    if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
-});
-
-// ── sidebar active link on scroll ──
-const sections = document.querySelectorAll('section[id]');
-const links    = document.querySelectorAll('.sidebar a[href^="#"]');
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
-}, { passive: true });
-</script>
+<script src="assets/docs.js"></script>
 </body>
 </html>
